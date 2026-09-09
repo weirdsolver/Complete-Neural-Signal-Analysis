@@ -1,0 +1,13 @@
+source-data/
+node_modules/
+test-results/
+bench/perf-results.json
+bench/perf-report.md
+.env
+.env.*
+.DS_Store
+__pycache__/
+*.pyc
+
+# MkDocs build output
+/site/

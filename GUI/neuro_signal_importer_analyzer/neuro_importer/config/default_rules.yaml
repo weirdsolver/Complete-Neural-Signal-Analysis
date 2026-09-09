@@ -1,0 +1,15 @@
+# Default neural-signal-only rules.
+# Stimulation start/stop handling is intentionally excluded in this first version.
+
+channels:
+  exclude_exact:
+    - BIP1
+    - BIP2
+    - RESP1
+  exclude_prefixes:
+    - BIP
+    - RESP
+    - AUX
+
+signal:
+  canonical_orientation: samples_by_channels

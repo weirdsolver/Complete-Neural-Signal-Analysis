@@ -1,0 +1,6 @@
+{
+  "channel_namespace": "FinalSpark_4Organoids_8ElectrodesEach",
+  "n_channels": 32,
+  "modality": "MEA",
+  "description": "FinalSpark-style 32-electrode per-MEA profile: 4 organoids x 8 electrodes."
+}

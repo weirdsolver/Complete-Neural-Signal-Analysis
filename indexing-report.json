@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-09-09T07:26:17+00:00",
+  "site_url": "https://soulsyrup1.github.io/Complete-Neural-Signal-Analysis",
+  "repo_url": "https://github.com/soulsyrup1/Complete-Neural-Signal-Analysis",
+  "urls": [
+    "https://soulsyrup1.github.io/Complete-Neural-Signal-Analysis/"
+  ],
+  "multilingual_seo_languages": [
+    "en",
+    "de",
+    "ru",
+    "zh",
+    "ja"
+  ],
+  "keyword_count_total": 344,
+  "notes": [
+    "Google sitemap ping is intentionally not used; use Google Search Console sitemap submission and URL Inspection.",
+    "IndexNow is used only when INDEXNOW_KEY is configured and the key file can be hosted on GitHub Pages.",
+    "No fake /ping requests are sent to research, government, funder, or academic websites.",
+    "The workflow updates the GitHub Pages docs/ website, not only the github.com repository URL."
+  ]
+}

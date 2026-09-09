@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neuro Signal App v0.11.33 — Minimal Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Neuro Signal App <span>v0.11.33 — Minimal Dashboard</span></h1>
+      <p>Start with only the essentials: import data, compare datasets, run Higuchi FD, embedded attractor FD, saturation profiling, Katz FD, Wavelet Hurst, Manual Expert MFDFA, run compact MFDFA spectrum plots, compare MFDFA against shuffled/IAAFT surrogates, run wavelet-leader multifractal analysis, simulate Arnold tongues with a Kuramoto model, run circle-map fixed-point locking, run circle-map converged-density phase analysis, or organize MFDFA outputs with the plot viewer. Extra tools are tucked away as optional tabs.</p>
+    </div>
+    <div id="serverStatus">checking backend...</div>
+  </header>
+
+  <nav class="simple-nav minimal-nav">
+    <button class="tab active" data-tab="homeTab">Home</button>
+    <button class="tab" data-tab="importTab">Import Dataset(s)</button>
+    <button class="tab" data-tab="compareTab">Compare Datasets</button>
+    <button class="tab" data-tab="higuchiTab">Higuchi FD</button>
+    <button class="tab" data-tab="embeddedFdTab">Embedded FD</button>
+    <button class="tab" data-tab="saturationTab">Saturation Profiling</button>
+    <button class="tab" data-tab="katzTab">Katz FD</button>
+    <button class="tab" data-tab="waveletTab">Wavelet Hurst</button>
+    <button class="tab" data-tab="mfdfaTab">MFDFA</button>
+    <button class="tab" data-tab="mfdfaSpectrumTab">MFDFA Spectrum</button>
+    <button class="tab" data-tab="mfdfaShuffleTab">MFDFA Shuffle</button>
+    <button class="tab" data-tab="mfdfaIaaftTab">MFDFA IAAFT</button>
+    <button class="tab" data-tab="waveletLeaderTab">Wavelet Leader</button>
+    <button class="tab" data-tab="lyapunovSpectrumTab">Lyapunov</button>
+    <button class="tab" data-tab="arnoldKuramotoTab">Arnold/Kuramoto</button>
+    <button class="tab" data-tab="circleMapArnoldTab">Circle Map</button>
+    <button class="tab" data-tab="circleMapDensityTab">Circle Density</button>
+    <button class="tab" data-tab="mfdfaViewerTab">MFDFA Viewer</button>
+    <button id="moreOptionsBtn" type="button">More tools</button>
+    <span id="optionalTabs" class="optional-tabs" hidden>
+      <button class="tab" data-tab="neuromouseTab">NeuroMouse</button>
+      <button class="tab" data-tab="advancedMethodsTab">All Advanced Methods</button>
+      <button class="tab" data-tab="previewTab">Quick Visualizations</button>
+      <button class="tab" data-tab="liveTab">Live Replay</button>
+      <button class="tab" data-tab="resultsTab">Results</button>
+    </span>
+  </nav>
+
+  <main>
+    <section id="homeTab" class="panel active simple-home-panel">
+      <div class="simple-hero card minimal-hero-card">
+        <div class="new-badge">v0.11.33 minimal</div>
+        <h2>Choose one core action</h2>
+        <p>No extra controls are shown by default. Import data first, then run core fractal analyses compare MFDFA against shuffle surrogates, or organize MFDFA outputs.</p>
+        <div class="simple-action-grid minimal-action-grid">
+          <button id="homeUploadBtn" class="simple-action primary-action" type="button">
+            <strong>Import dataset / datasets</strong>
+            <span>Upload one file, many files, a folder, or a ZIP.</span>
+          </button>
+          <button id="homeCompareBtn" class="simple-action" type="button">
+            <strong>Compare datasets</strong>
+            <span>Compare two groups of converted recordings.</span>
+          </button>
+          <button id="homeHiguchiBtn" class="simple-action" type="button">
+            <strong>Run Higuchi FD</strong>
+            <span>Notebook-style black/cyan Higuchi plots.</span>
+          </button>
+          <button id="homeEmbeddedFdBtn" class="simple-action" type="button">
+            <strong>Run embedded FD</strong>
+            <span>Box-counting FD + correlation dimension D2 plots.</span>
+          </button>
+          <button id="homeSaturationBtn" class="simple-action" type="button">
+            <strong>Run saturation profiling</strong>
+            <span>ΔD2, saturation classes, tail slopes, and D2(m) plots.</span>
+          </button>
+          <button id="homeKatzBtn" class="simple-action" type="button">
+            <strong>Run Katz FD</strong>
+            <span>Katz fractal dimension for embedded trajectories.</span>
+          </button>
+          <button id="homeWaveletBtn" class="simple-action" type="button">
+            <strong>Run Wavelet Hurst</strong>
+            <span>Manual Haar/db4 wavelet Hurst and D≈2−H plots.</span>
+          </button>
+          <button id="homeMfdfaBtn" class="simple-action" type="button">
+            <strong>Run Manual Expert MFDFA</strong>
+            <span>Fq(s), h(q), α/f(α), Δα, asymmetry, and topographic plots.</span>
+          </button>
+          <button id="homeMfdfaSpectrumBtn" class="simple-action" type="button">
+            <strong>Run MFDFA Spectrum</strong>
+            <span>Compact h(q), tau(q), f(alpha), and spectrum-width plots.</span>
+          </button>
+          <button id="homeMfdfaShuffleBtn" class="simple-action" type="button">
+            <strong>Run MFDFA shuffle surrogate</strong>
+            <span>Compare original Δα against shuffled surrogate distributions for all channels.</span>
+          </button>
+          <button id="homeMfdfaIaaftBtn" class="simple-action" type="button">
+            <strong>Run MFDFA IAAFT surrogate</strong>
+            <span>Compare original Δα against IAAFT surrogate distributions for all channels.</span>
+          </button>
+          <button id="homeWaveletLeaderBtn" class="simple-action" type="button">
+            <strong>Run Wavelet Leader</strong>
+            <span>Manual Haar wavelet leaders, zeta(q), alpha(q), f(alpha), and alpha-width rankings.</span>
+          </button>
+          <button id="homeLyapunovSpectrumBtn" class="simple-action" type="button">
+            <strong>Run Lyapunov Spectrum</strong>
+            <span>Local Jacobian/QR spectra, LLE, KS entropy proxy, Kaplan-Yorke dimension, and expert chaos plots.</span>
+          </button>
+          <button id="homeArnoldKuramotoBtn" class="simple-action" type="button">
+            <strong>Run Arnold/Kuramoto</strong>
+            <span>EEG-derived natural frequencies, driven Kuramoto Arnold tongue heatmaps, and order-parameter plots.</span>
+          </button>
+          <button id="homeCircleMapArnoldBtn" class="simple-action" type="button">
+            <strong>Run Circle Map Arnold tongues</strong>
+            <span>Hilbert circular mean phase, fixed-point locking heatmaps, boundaries, and phase diagnostics.</span>
+          </button>
+          <button id="homeCircleMapDensityBtn" class="simple-action" type="button">
+            <strong>Run Circle Map Density</strong>
+            <span>Bandpassed Hilbert phases, final-state probability densities, concentration, and resultant-length plots.</span>
+          </button>
+          <button id="homeMfdfaViewerBtn" class="simple-action" type="button">
+            <strong>View MFDFA plots</strong>
+            <span>Contact sheets, ranked galleries, inventory, metric plots, and width/asymmetry scatter.</span>
+          </button>
+        </div>
+      </div>
+      <div class="card simple-guidance-card">
+        <h3>More tools stay hidden until needed</h3>
+        <p>Normal NeuroMouse, quick visualizations, live replay, results, and the full backend method runner are available as optional tabs.</p>
+        <div class="button-row">
+          <button id="homeShowMoreBtn" type="button">Show more tools</button>
+          <a class="button-like" href="/api/health" target="_blank">Check running version</a>
+        </div>
+      </div>
+    </section>
+    <section id="importTab" class="panel">
+      <div class="card import-landing-card">
+        <h2>Import dataset / datasets</h2>
+        <p>Drop files, folders, or ZIP archives here. After conversion, use the Higuchi FD or Embedded FD tabs for the simplified analysis workflow.</p>
+        <div class="button-row">
+          <button id="jumpAdvancedPlotsBtn" class="primary">Go to Higuchi FD</button>
+          <button id="jumpEmbeddedFdBtn" type="button">Go to Embedded FD</button>
+          <button id="jumpSaturationBtn" type="button">Go to Saturation Profiling</button>
+          <button id="jumpKatzBtn" type="button">Go to Katz FD</button>
+          <button id="jumpWaveletBtn" type="button">Go to Wavelet Hurst</button>
+          <button id="jumpMfdfaBtn" type="button">Go to MFDFA</button>
+          <button id="jumpMfdfaSpectrumBtn" type="button">Go to MFDFA Spectrum</button>
+          <button id="jumpMfdfaShuffleBtn" type="button">Go to MFDFA Shuffle</button>
+          <button id="jumpMfdfaIaaftBtn" type="button">Go to MFDFA IAAFT</button>
+          <button id="jumpWaveletLeaderBtn" type="button">Go to Wavelet Leader</button>
+          <button id="jumpArnoldKuramotoBtn" type="button">Go to Arnold/Kuramoto</button>
+          <button id="jumpCircleMapArnoldBtn" type="button">Go to Circle Map</button>
+          <button id="jumpMfdfaViewerBtn" type="button">Go to MFDFA Viewer</button>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h2>1. Drop files or folders</h2>
+          <div id="dropZone" class="drop-zone">
+            <strong>Drop neural signal files here</strong>
+            <p>.mat, .h5, .hdf5, .nwb, .npy, .npz, .csv, .tsv, .xlsx, .edf, .bdf, .set, .vhdr</p>
+            <p class="hint">You can upload raw files/folders or .zip archives. For EEGLAB/BIDS, include sidecars such as .fdt, *_channels.tsv, *_electrodes.tsv, *_events.tsv, and *_eeg.json in the same upload/folder.</p>
+            <input id="fileInput" type="file" multiple />
+            <input id="folderInput" type="file" multiple webkitdirectory directory hidden />
+          </div>
+          <div class="button-row">
+            <button id="chooseFilesBtn">Choose Files</button>
+            <button id="chooseFolderBtn">Choose Folder</button>
+            <button id="clearFilesBtn">Clear</button>
+            <button id="inspectBtn">Inspect Uploads</button>
+          </div>
+          <ul id="fileList" class="file-list"></ul>
+        </div>
+
+        <div class="card">
+          <h2>2. Options</h2>
+          <label>Output folder on this computer <input id="outputDir" placeholder="blank = app workspace output" /></label>
+          <details open>
+            <summary>Basic conversion options</summary>
+            <label>Sampling rate override Hz <input id="samplingRate" type="number" step="any" placeholder="auto" /></label>
+            <label>Signal path override <input id="signalPath" placeholder="e.g. DSamp.EEGdata or /samples" /></label>
+            <label>Orientation
+              <select id="orientation">
+                <option value="auto">Auto-detect</option>
+                <option value="samples_by_channels">Samples × Channels</option>
+                <option value="channels_by_samples">Channels × Samples</option>
+              </select>
+            </label>
+            <label><input id="includeAux" type="checkbox" /> Keep auxiliary channels</label>
+          </details>
+          <details>
+            <summary>Units and export</summary>
+            <label>Original units <input id="originalUnits" placeholder="auto / ADC / uV / mV / V" /></label>
+            <label>Target units <input id="targetUnits" placeholder="blank = keep" /></label>
+            <label>Scale factor <input id="scaleFactor" type="number" step="any" /></label>
+            <label>Offset <input id="offset" type="number" step="any" /></label>
+            <label>Export format
+              <select id="exportFormat">
+                <option value="npy">NumPy .npy</option>
+                <option value="memmap">Memory-mapped .npy</option>
+                <option value="hdf5">HDF5</option>
+                <option value="zarr">Zarr</option>
+              </select>
+            </label>
+            <label><input id="saveSignalCsv" type="checkbox" /> Also write signal.csv for small files</label>
+          </details>
+          <details>
+            <summary>Optional preprocessing / windows</summary>
+            <label><input id="preprocess" type="checkbox" /> Enable preprocessing copy</label>
+            <label><input id="demean" type="checkbox" /> Demean</label>
+            <label><input id="detrend" type="checkbox" /> Detrend</label>
+            <label>Normalization
+              <select id="normalization">
+                <option value="">None</option>
+                <option value="zscore">Z-score</option>
+                <option value="robust_zscore">Robust z-score</option>
+              </select>
+            </label>
+            <label><input id="makeWindows" type="checkbox" /> Create model windows/tensors</label>
+            <label>Window seconds <input id="windowSeconds" type="number" step="any" value="2" /></label>
+            <label>Step seconds <input id="stepSeconds" type="number" step="any" value="1" /></label>
+          </details>
+          <details open>
+            <summary>NeuroMouse analysis options</summary>
+            <label>Max samples used for offline NeuroMouse analysis <input id="neuromouseMaxSamples" type="number" value="240000" min="1000" step="1000" /></label>
+            <label>Max sliding windows for NeuroMouse geometry <input id="neuromouseMaxWindows" type="number" value="600" min="10" step="10" /></label>
+            <p class="hint">Large files are analyzed offline by the Python backend. When NeuroMouse data is ready, this app stays open and shows buttons/links so you can choose when to open the original NeuroMouse workbench. The raw converted signal is still preserved.</p>
+          </details>
+          <div class="button-row big">
+            <button id="convertBtn" class="primary">Convert</button>
+            <button id="fullAnalyzeBtn" class="accent">Full Pipeline: Convert + Analyze</button>
+            <button id="neuromouseAnalyzeBtn" class="accent">Analyze in NeuroMouse</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section id="saturationTab" class="panel">
+      <div id="saturationDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Dimension Saturation Profiling</h2>
+        <p>Profiles whether embedded correlation dimension D2 saturates across embedding dimensions. It uses the Embedded FD summary if available, or can run Embedded FD first, then plots ΔD2, saturation markers, tail slopes, and class counts in the same black/cyan notebook style.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="saturationRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="saturationUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Embedded FD mode if needed
+              <select id="saturationMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Metric
+              <select id="saturationMetric">
+                <option value="corr_dim_d2" selected>corr_dim_d2 / D2</option>
+                <option value="boxcount_fd">boxcount_fd</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <details>
+          <summary>Thresholds and advanced options</summary>
+          <div class="grid two">
+            <label>Absolute Δ threshold <input id="saturationAbsThresh" type="number" step="any" value="0.12" /></label>
+            <label>Relative Δ threshold <input id="saturationRelThresh" type="number" step="any" value="0.04" /></label>
+            <label>Consecutive small increments <input id="saturationConsecutive" type="number" step="1" value="2" /></label>
+            <label>Tail points for slope <input id="saturationTailPoints" type="number" step="1" value="3" /></label>
+            <label>Embedding dimensions <input id="saturationDims" value="2,3,4,5,6,7,8,9,10" /></label>
+            <label>Delay tau ms <input id="saturationTauMs" type="number" step="any" value="10" /></label>
+            <label>Max channels <input id="saturationMaxChannels" type="number" step="1" placeholder="all" /></label>
+            <label>Max analysis samples <input id="saturationMaxSamples" type="number" step="1000" value="120000" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="saturationRunBtn" class="primary" type="button">Run Dimension Saturation Profiling</button>
+          <button id="saturationCopyJsonBtn" type="button">Copy result JSON</button>
+        </div>
+        <div id="saturationStatus" class="status">Ready.</div>
+        <div id="saturationResult" class="advanced-result-panel"></div>
+      </div>
+    </section>
+
+
+
+    <section id="katzTab" class="panel">
+      <div id="katzDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Katz Fractal Dimension</h2>
+        <p>Computes Katz fractal dimension for each embedded trajectory. It uses saved embedding .npy files when present, or generates delay embeddings from the converted signal, then renders the same black/cyan style plots from the notebook workflow.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="katzRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="katzUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="katzMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Embedding dimensions <input id="katzDims" value="2,3,4,5,6,7,8,9,10" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Advanced options</summary>
+          <div class="grid two">
+            <label>Delay tau ms <input id="katzTauMs" type="number" step="any" value="10" /></label>
+            <label>Max channels <input id="katzMaxChannels" type="number" step="1" placeholder="all" /></label>
+            <label>Max analysis samples <input id="katzMaxSamples" type="number" step="1000" value="120000" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="katzRunBtn" class="primary" type="button">Run Katz Fractal Dimension</button>
+          <button id="katzCopyJsonBtn" type="button">Copy result JSON</button>
+        </div>
+        <div id="katzStatus" class="status">Ready.</div>
+        <div id="katzResult" class="advanced-result-panel"></div>
+      </div>
+    </section>
+
+    <section id="waveletTab" class="panel">
+      <div id="waveletDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Manual Wavelet Hurst Exponent</h2>
+        <p>Ports your manual wavelet Hurst notebook into the app. It runs Haar/db4 DWT in the backend, estimates H from log2(scale) vs log2(std(detail coefficients)), computes D≈2−H, and renders black/cyan plots in the frontend.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="waveletRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="waveletUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="waveletMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Wavelet
+              <select id="waveletName">
+                <option value="haar" selected>haar</option>
+                <option value="db4">db4</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <details>
+          <summary>Advanced options</summary>
+          <div class="grid two">
+            <label>Max DWT level <input id="waveletMaxLevel" type="number" step="1" placeholder="mode default" /></label>
+            <label>Temporal stability
+              <select id="waveletTemporal">
+                <option value="true" selected>true</option>
+                <option value="false">false</option>
+              </select>
+            </label>
+            <label>Temporal windows <input id="waveletTemporalWindows" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max channels <input id="waveletMaxChannels" type="number" step="1" placeholder="all" /></label>
+            <label>Max analysis samples <input id="waveletMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="waveletRunBtn" class="primary" type="button">Run Wavelet Hurst</button>
+          <button id="waveletCopyJsonBtn" type="button">Copy result JSON</button>
+        </div>
+        <div id="waveletStatus" class="status">Ready.</div>
+        <div id="waveletResult" class="advanced-result-panel">
+          <div class="method-note">Manual wavelet Hurst plots will appear here after the backend method finishes.</div>
+          <div class="advanced-plot-pills"><span>Raw offset traces</span><span>Hurst barplot</span><span>Fit R²</span><span>Scaling curves</span><span>Detail-energy heatmaps</span><span>Topographic H map</span><span>Temporal stability</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="mfdfaTab" class="panel">
+      <div id="mfdfaDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Manual Expert MFDFA</h2>
+        <p>Runs the real MFDFA analysis first: Fq(s), h(q), tau(q), alpha/f(alpha), alpha width, asymmetry, complexity score, galleries, topographic map, regional/hemisphere summaries, and optional temporal stability. Plots are backend-generated in the same black/cyan notebook style so labels and ticks are preserved.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="mfdfaRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="mfdfaUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="mfdfaMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Temporal stability
+              <select id="mfdfaTemporal">
+                <option value="false" selected>false</option>
+                <option value="true">true</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <details>
+          <summary>Advanced options</summary>
+          <div class="grid two">
+            <label>Save per-channel plots
+              <select id="mfdfaPerChannelPlots"><option value="false" selected>false</option><option value="true">true</option></select>
+            </label>
+            <label>q min <input id="mfdfaQMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>q max <input id="mfdfaQMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>q count <input id="mfdfaQCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Polynomial order <input id="mfdfaPolyOrder" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max channels <input id="mfdfaMaxChannels" type="number" step="1" placeholder="all" /></label>
+            <label>Max analysis samples <input id="mfdfaMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="mfdfaSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="mfdfaSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="mfdfaRunBtn" class="primary" type="button">Run Manual Expert MFDFA</button>
+          <button id="mfdfaCopyJsonBtn" type="button">Copy result JSON</button>
+        </div>
+        <div id="mfdfaStatus" class="status">Ready.</div>
+        <div id="mfdfaResult" class="advanced-result-panel">
+          <div class="method-note">Manual Expert MFDFA plots will appear here after the backend method finishes.</div>
+          <div class="advanced-plot-pills"><span>Fq(s)</span><span>h(q)</span><span>α/f(α)</span><span>Δα width</span><span>asymmetry</span><span>topographic map</span><span>temporal stability</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="neuromouseTab" class="panel">
+      <div class="grid two">
+        <div class="card">
+          <h2>NeuroMouse Workbench</h2>
+          <p>Use the original NeuroMouse workbench as the interactive browser workbench. Our backend converts, computes large/offline features, and writes NeuroMouse <code>data.json</code>; this page stays open and provides explicit buttons to open NeuroMouse with variable electrode names/counts intact.</p>
+          <div class="button-row big">
+            <button id="openNeuroMouseBtn" class="primary">Open NeuroMouse Demo / Manual Loader</button>
+            <button id="analyzeNeuroMouseBtn2" class="accent">Analyze Current Uploads in NeuroMouse</button>
+          </div>
+          <label>Converted recording folders to build NeuroMouse data.json <textarea id="neuromouseConvertedDirs" placeholder="One converted folder per line"></textarea></label>
+          <label>NeuroMouse output folder <input id="neuromouseOutput" placeholder="blank = app workspace output" /></label>
+          <div class="button-row">
+            <button id="neuromouseFromConvertedBtn" class="primary">Build NeuroMouse From Converted Folders</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>NeuroMouse Live Replay</h2>
+          <p>This streams sample-major JSON frames into the NeuroMouse live panel. It uses the same variable-electrode metadata from <code>channels.csv</code>.</p>
+          <label>signal.npy path <input id="neuromouseLiveSignal" placeholder="/path/to/converted/signal.npy" /></label>
+          <label>channels.csv path <input id="neuromouseLiveChannels" placeholder="optional" /></label>
+          <label>metadata.json path <input id="neuromouseLiveMetadata" placeholder="optional" /></label>
+          <label>Sampling rate Hz <input id="neuromouseLiveFs" type="number" step="any" placeholder="auto / required if missing" /></label>
+          <label>Replay speed <input id="neuromouseLiveSpeed" type="number" step="any" value="1" /></label>
+          <div class="button-row">
+            <button id="openNeuroMouseLiveBtn" class="primary">Open NeuroMouse Live Replay</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>NeuroMouse Comparison</h2>
+        <p>Builds one NeuroMouse <code>data.json</code> per recording, a comparison manifest, and a session ZIP. Feature-level comparison is safe across different electrode counts.</p>
+        <div class="button-row">
+          <button id="neuromouseCompareBtn" class="primary">Compare Groups in NeuroMouse</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="higuchiTab" class="panel">
+      <div id="higuchiDirectCard" class="card higuchi-direct-card">
+        <div class="new-badge">NEW BACKEND METHOD</div>
+        <h2>Higuchi Fractal Dimension — Backend Analysis + Frontend Plots</h2>
+        <p>This is the new analysis path you asked for. It runs Higuchi FD in the backend and plots the returned JSON directly in this frontend, similar to the working phase-space approach.</p>
+        <div class="grid two compact-grid">
+          <div>
+            <label>Converted recording folder
+              <input id="higuchiDirectRecordingDir" placeholder="blank = latest converted recording" />
+            </label>
+            <div class="button-row">
+              <button id="higuchiDirectUseLatestBtn" type="button">Use Latest Converted Recording</button>
+            </div>
+          </div>
+          <div class="method-param-grid">
+            <label>Speed mode
+              <select id="higuchiDirectMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Segment start sec <input id="higuchiDirectStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="higuchiDirectEnd" type="number" step="any" placeholder="optional" /></label>
+            <label>k max override <input id="higuchiDirectKMax" type="number" step="1" placeholder="optional" /></label>
+          </div>
+        </div>
+        <div class="button-row big">
+          <button id="higuchiDirectRunBtn" class="primary" type="button">Run Higuchi Fractal Dimension</button>
+          <button id="higuchiDirectCopyJsonBtn" type="button">Copy Higuchi JSON</button>
+        </div>
+        <div id="higuchiDirectStatus" class="status big-status">Ready. Import/convert a recording, then run Higuchi FD here.</div>
+        <div id="higuchiDirectResult" class="method-result-panel higuchi-direct-result">
+          <div class="method-note">Higuchi FD plots will appear here after the backend method finishes.</div>
+          <div class="advanced-plot-pills">
+            <span>HFD by channel</span><span>Scalp layout map</span><span>Regional mean ± SEM</span><span>Left-right asymmetry</span><span>Rolling HFD stability</span><span>Fit diagnostics</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="embeddedFdTab" class="panel">
+      <div id="embeddedFdDirectCard" class="card embedded-fd-card">
+        <div class="new-badge">NEW BACKEND METHOD</div>
+        <h2>Embedded Fractal Dimension — Attractor Embeddings</h2>
+        <p>This ports your embedded-fractal-dimension research analysis into the app. It computes box-counting fractal dimension and sampled correlation dimension D2 across 2D–10D embeddings. If saved embedding files are not present, the backend generates delay embeddings from <code>signal.npy</code>.</p>
+        <div class="grid two compact-grid">
+          <div>
+            <label>Converted recording folder
+              <input id="embeddedFdRecordingDir" placeholder="blank = latest converted recording" />
+            </label>
+            <div class="button-row">
+              <button id="embeddedFdUseLatestBtn" type="button">Use Latest Converted Recording</button>
+            </div>
+          </div>
+          <div class="method-param-grid">
+            <label>Speed mode
+              <select id="embeddedFdMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Embedding dims <input id="embeddedFdDims" value="2,3,4,5,6,7,8,9,10" /></label>
+            <label>Delay tau ms <input id="embeddedFdTauMs" type="number" step="any" value="10" /></label>
+            <label>Max channels <input id="embeddedFdMaxChannels" type="number" step="1" placeholder="optional" /></label>
+          </div>
+        </div>
+        <div class="button-row big">
+          <button id="embeddedFdRunBtn" class="primary" type="button">Run Embedded Fractal Dimension</button>
+          <button id="embeddedFdCopyJsonBtn" type="button">Copy Embedded FD JSON</button>
+        </div>
+        <div id="embeddedFdStatus" class="status big-status">Ready. Import/convert a recording, then run embedded fractal dimension here.</div>
+        <div id="embeddedFdResult" class="method-result-panel embedded-fd-result">
+          <div class="method-note">Embedded FD plots will appear here after the backend method finishes.</div>
+          <div class="advanced-plot-pills">
+            <span>D2 vs embedding dimension</span><span>Box FD vs embedding dimension</span><span>Mean dimensions</span><span>D2 heatmap</span><span>Box FD heatmap</span><span>Complexity ranking</span><span>D2 vs box FD</span><span>Fit QC</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="advancedMethodsTab" class="panel">
+      <div class="card advanced-analysis-divider">
+        <h2>All Advanced Methods</h2>
+        <p class="hint">Optional method runner for every backend analysis. The two primary fractal analyses have dedicated tabs and render plots directly.</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h2>Advanced Methods</h2>
+          <p>Run native NeuroMouse-style backend methods against a converted recording folder. These are optional advanced analyses layered on top of the normal continuous-signal pipeline.</p>
+          <label>Converted recording folder <input id="advancedRecordingDir" placeholder="/path/to/converted recording folder containing signal.npy" /></label>
+          <div class="button-row">
+            <button id="advancedUseLatestBtn">Use Latest Converted Recording</button>
+            <button id="advancedRefreshMethodsBtn">Refresh Methods</button>
+          </div>
+          <label>Method
+            <select id="advancedMethodSelect"></select>
+          </label>
+          <div id="advancedMethodDescription" class="hint">Loading available methods...</div>
+          <div id="advancedParams" class="method-param-grid"></div>
+          <div class="button-row big">
+            <button id="advancedRunBtn" class="primary">Run Advanced Method</button>
+            <button id="advancedCopyJsonBtn">Copy Result JSON</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Method Output</h2>
+          <div id="advancedStatus" class="status">No advanced method has run yet.</div>
+          <div id="advancedSummary" class="method-summary"></div>
+          <div id="advancedResultPanel" class="method-result-panel">Choose a method and run it on a converted recording folder.</div>
+        </div>
+      </div>
+      <details class="card">
+        <summary>Raw advanced method result JSON</summary>
+        <pre id="advancedRawJson">{}</pre>
+      </details>
+
+    </section>
+
+
+    <section id="mfdfaSpectrumTab" class="panel">
+      <div id="mfdfaSpectrumDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">v0.11.33</div>
+        <h2>Manual MFDFA Spectrum</h2>
+        <p>Runs the compact manual MFDFA spectrum workflow you sent: per-channel h(q), tau(q), singularity spectrum f(alpha), saved NPZ files, summary CSV, and alpha-width comparison plot in the same black/cyan style.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="mfdfaSpectrumRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="mfdfaSpectrumUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="mfdfaSpectrumMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="mfdfaSpectrumMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Advanced spectrum options</summary>
+          <div class="grid two">
+            <label>q min <input id="mfdfaSpectrumQMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>q max <input id="mfdfaSpectrumQMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>q count <input id="mfdfaSpectrumQCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Polynomial order <input id="mfdfaSpectrumPolyOrder" type="number" step="1" placeholder="mode default" /></label>
+            <label>Scale min power <input id="mfdfaSpectrumScaleMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale max power <input id="mfdfaSpectrumScaleMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale count <input id="mfdfaSpectrumNScales" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max analysis samples <input id="mfdfaSpectrumMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="mfdfaSpectrumSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="mfdfaSpectrumSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="mfdfaSpectrumRunBtn" class="primary" type="button">Run Manual MFDFA Spectrum</button>
+          <button id="mfdfaSpectrumCopyJsonBtn" type="button">Copy Spectrum JSON</button>
+        </div>
+        <div id="mfdfaSpectrumStatus" class="status">Ready to run compact MFDFA spectrum analysis.</div>
+        <div id="mfdfaSpectrumResult" class="method-result-panel">
+          <div class="method-note">MFDFA spectrum plots will appear here after the backend finishes.</div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="mfdfaShuffleTab" class="panel">
+      <div id="mfdfaShuffleDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">v0.11.33</div>
+        <h2>MFDFA Shuffle Surrogate</h2>
+        <p>Runs the shuffle-surrogate MFDFA workflow you sent for all available channels by default. It compares original multifractal spectrum width Δα against shuffled surrogate widths, saves per-channel NPZ outputs, and renders black/cyan h(q), f(alpha), shuffle histogram, summary bar, and width-excess plots.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="mfdfaShuffleRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="mfdfaShuffleUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="mfdfaShuffleMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="mfdfaShuffleMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Advanced shuffle-surrogate options</summary>
+          <div class="grid two">
+            <label>Shuffle count <input id="mfdfaShuffleNShuffles" type="number" step="1" placeholder="mode default" /></label>
+            <label>Random seed <input id="mfdfaShuffleSeed" type="number" step="1" value="0" /></label>
+            <label>q min <input id="mfdfaShuffleQMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>q max <input id="mfdfaShuffleQMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>q count <input id="mfdfaShuffleQCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Polynomial order <input id="mfdfaShufflePolyOrder" type="number" step="1" placeholder="mode default" /></label>
+            <label>Scale min power <input id="mfdfaShuffleScaleMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale max power <input id="mfdfaShuffleScaleMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale count <input id="mfdfaShuffleNScales" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max analysis samples <input id="mfdfaShuffleMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="mfdfaShuffleSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="mfdfaShuffleSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="mfdfaShuffleRunBtn" class="primary" type="button">Run MFDFA Shuffle Surrogate</button>
+          <button id="mfdfaShuffleCopyJsonBtn" type="button">Copy Shuffle JSON</button>
+        </div>
+        <div id="mfdfaShuffleStatus" class="status">Ready to run MFDFA shuffle-surrogate analysis.</div>
+        <div id="mfdfaShuffleResult" class="method-result-panel">
+          <div class="method-note">Shuffle-surrogate plots will appear here after the backend finishes.</div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <section id="mfdfaIaaftTab" class="panel">
+      <div id="mfdfaIaaftDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>MFDFA IAAFT Surrogate</h2>
+        <p>Compares original multifractal spectrum width Δα against IAAFT surrogates for every available channel by default. The analysis preserves the same black/cyan plots: original h(q), original f(alpha), IAAFT alpha-width histograms, original-vs-IAAFT summary bars, and width-excess ranking.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="mfdfaIaaftRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="mfdfaIaaftUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="mfdfaIaaftMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="mfdfaIaaftMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Surrogate and MFDFA controls</summary>
+          <div class="grid two">
+            <label>IAAFT surrogate count <input id="mfdfaIaaftNSurrogates" type="number" step="1" placeholder="mode default" /></label>
+            <label>IAAFT iterations <input id="mfdfaIaaftIters" type="number" step="1" placeholder="mode default" /></label>
+            <label>Random seed <input id="mfdfaIaaftSeed" type="number" step="1" value="0" /></label>
+            <label>q min <input id="mfdfaIaaftQMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>q max <input id="mfdfaIaaftQMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>q count <input id="mfdfaIaaftQCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Polynomial order <input id="mfdfaIaaftPolyOrder" type="number" step="1" placeholder="mode default" /></label>
+            <label>Scale min power <input id="mfdfaIaaftScaleMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale max power <input id="mfdfaIaaftScaleMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Scale count <input id="mfdfaIaaftNScales" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max analysis samples <input id="mfdfaIaaftMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="mfdfaIaaftSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="mfdfaIaaftSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="mfdfaIaaftRunBtn" class="primary" type="button">Run MFDFA IAAFT Surrogate</button>
+          <button id="mfdfaIaaftCopyJsonBtn" type="button">Copy IAAFT JSON</button>
+        </div>
+        <div id="mfdfaIaaftStatus" class="status">Ready to run MFDFA IAAFT-surrogate analysis.</div>
+        <div id="mfdfaIaaftResult" class="method-result-panel">
+          <div class="method-note">Run this after importing/converting a recording. Ultra mode is the default; balanced mode matches the notebook settings most closely.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waveletLeaderTab" class="panel">
+      <div id="waveletLeaderDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Wavelet Leader Multifractal</h2>
+        <p>Runs the manual Haar wavelet-leader multifractal workflow for all available channels by default. It computes leader structure functions, zeta(q), alpha(q), f(alpha), spectrum width, and asymmetry, then displays the same black/cyan per-channel spectrum triptychs and summary rankings.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="waveletLeaderRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="waveletLeaderUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="waveletLeaderMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="waveletLeaderMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Wavelet-leader controls</summary>
+          <div class="grid two">
+            <label>q min <input id="waveletLeaderQMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>q max <input id="waveletLeaderQMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>q count <input id="waveletLeaderQCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Fit j min <input id="waveletLeaderFitJMin" type="number" step="1" placeholder="mode default" /></label>
+            <label>Fit j max <input id="waveletLeaderFitJMax" type="number" step="1" placeholder="mode default / auto" /></label>
+            <label>Min leaders per scale <input id="waveletLeaderMinLeaders" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max analysis samples <input id="waveletLeaderMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="waveletLeaderSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="waveletLeaderSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="waveletLeaderRunBtn" class="primary" type="button">Run Wavelet Leader Multifractal</button>
+          <button id="waveletLeaderCopyJsonBtn" type="button">Copy Wavelet Leader JSON</button>
+        </div>
+        <div id="waveletLeaderStatus" class="status">Ready to run wavelet-leader multifractal analysis.</div>
+        <div id="waveletLeaderResult" class="method-result-panel">
+          <div class="method-note">Run this after importing/converting a recording. Ultra mode is the default; balanced mode matches the notebook q-grid most closely.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lyapunovSpectrumTab" class="panel">
+      <div id="lyapunovSpectrumDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Lyapunov Spectrum</h2>
+        <p>Runs local Jacobian/QR Lyapunov spectrum estimation from precomputed embeddings when present, or generated delay embeddings from the converted <code>signal.npy</code>. It runs all available channels by default and renders the same black/cyan expert chaos plots from the notebook.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="lyapunovSpectrumRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="lyapunovSpectrumUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="lyapunovSpectrumMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="lyapunovSpectrumMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Lyapunov spectrum controls</summary>
+          <div class="grid two">
+            <label>Embedding dimensions <input id="lyapunovSpectrumDims" placeholder="mode default, e.g. 2,3" /></label>
+            <label>Delay tau ms <input id="lyapunovSpectrumTauMs" type="number" step="any" placeholder="mode default" /></label>
+            <label>Delay tau samples override <input id="lyapunovSpectrumTauSamples" type="number" step="1" placeholder="optional" /></label>
+            <label>k neighbors <input id="lyapunovSpectrumKNeighbors" type="number" step="1" placeholder="mode default" /></label>
+            <label>Theiler window <input id="lyapunovSpectrumTheiler" type="number" step="1" placeholder="mode default" /></label>
+            <label>Anchor stride <input id="lyapunovSpectrumStride" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max steps per embedding <input id="lyapunovSpectrumMaxSteps" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max points per embedding <input id="lyapunovSpectrumMaxPoints" type="number" step="100" placeholder="mode default" /></label>
+            <label>Max embedding files <input id="lyapunovSpectrumMaxFiles" type="number" step="1" placeholder="optional" /></label>
+            <label>Max analysis samples <input id="lyapunovSpectrumMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="lyapunovSpectrumSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="lyapunovSpectrumSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+            <label>Random seed <input id="lyapunovSpectrumSeed" type="number" step="1" value="0" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="lyapunovSpectrumRunBtn" class="primary" type="button">Run Lyapunov Spectrum</button>
+          <button id="lyapunovSpectrumCopyJsonBtn" type="button">Copy Lyapunov JSON</button>
+        </div>
+        <div id="lyapunovSpectrumStatus" class="status">Ready to run Lyapunov spectrum analysis.</div>
+        <div id="lyapunovSpectrumResult" class="method-result-panel">
+          <div class="method-note">Ultra mode is the default. Balanced/full modes increase embedding dimensions, neighbors, anchor steps, and sample caps.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="arnoldKuramotoTab" class="panel">
+      <div id="arnoldKuramotoDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Arnold Tongues / Kuramoto</h2>
+        <p>Estimates one dominant EEG frequency per channel, converts those into dimensionless Kuramoto natural frequencies, then simulates a phase-forced Kuramoto model over an Arnold tongue amplitude/frequency grid. It now includes oscillator-to-drive locking, collective phase locking, frequency-error diagnostics, contrast heatmaps, and black/cyan plots with visible labels, ticks, legends, and colorbars.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="arnoldKuramotoRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="arnoldKuramotoUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="arnoldKuramotoMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="arnoldKuramotoMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Arnold tongue and Kuramoto controls</summary>
+          <div class="grid two">
+            <label>Kuramoto coupling K <input id="arnoldKuramotoK" type="number" step="any" placeholder="mode default" /></label>
+            <label>Random seed <input id="arnoldKuramotoSeed" type="number" step="1" value="42" /></label>
+            <label>Drive amplitude min <input id="arnoldKuramotoAMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Drive amplitude max <input id="arnoldKuramotoAMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Drive amplitude grid count <input id="arnoldKuramotoACount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Drive frequency min <input id="arnoldKuramotoBMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Drive frequency max <input id="arnoldKuramotoBMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Drive frequency grid count <input id="arnoldKuramotoBCount" type="number" step="1" placeholder="mode default" /></label>
+            <label>Simulation end time <input id="arnoldKuramotoTEnd" type="number" step="any" placeholder="mode default" /></label>
+            <label>Time samples <input id="arnoldKuramotoNT" type="number" step="1" placeholder="mode default" /></label>
+            <label>Transient fraction <input id="arnoldKuramotoTransient" type="number" step="any" placeholder="mode default" /></label>
+            <label>Frequency band min Hz <input id="arnoldKuramotoFreqMin" type="number" step="any" placeholder="mode default" /></label>
+            <label>Frequency band max Hz <input id="arnoldKuramotoFreqMax" type="number" step="any" placeholder="mode default" /></label>
+            <label>Max analysis samples <input id="arnoldKuramotoMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="arnoldKuramotoSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="arnoldKuramotoSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="arnoldKuramotoRunBtn" class="primary" type="button">Run Arnold/Kuramoto</button>
+          <button id="arnoldKuramotoCopyJsonBtn" type="button">Copy Arnold/Kuramoto JSON</button>
+        </div>
+        <div id="arnoldKuramotoStatus" class="status">Ready to run Arnold tongue / Kuramoto analysis.</div>
+        <div id="arnoldKuramotoResult" class="method-result-panel">
+          <div class="method-note">Ultra mode is the default. Balanced/full modes increase the Arnold tongue grid density, simulation duration, and contour overlays. The upgraded workflow emphasizes drive-locking and frequency-error diagnostics in addition to mean synchronization.</div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="circleMapArnoldTab" class="panel">
+      <div id="circleMapArnoldDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Circle Map Arnold Tongues</h2>
+        <p>Extracts an EEG-derived circular mean phase using the Hilbert transform across all available channels, then computes fixed-point locking probability for the standard circle map over Ω and K. This is the fixed-point-locking workflow from your script, not a full p:q rotation-number Arnold tongue calculation.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="circleMapArnoldRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="circleMapArnoldUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="circleMapArnoldMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="circleMapArnoldMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Circle-map controls</summary>
+          <div class="grid two">
+            <label>Omega grid count <input id="circleMapArnoldNOmega" type="number" step="1" placeholder="mode default" /></label>
+            <label>K grid count <input id="circleMapArnoldNK" type="number" step="1" placeholder="mode default" /></label>
+            <label>Omega min <input id="circleMapArnoldOmegaMin" type="number" step="any" placeholder="0" /></label>
+            <label>Omega max <input id="circleMapArnoldOmegaMax" type="number" step="any" placeholder="1" /></label>
+            <label>K min <input id="circleMapArnoldKMin" type="number" step="any" placeholder="0" /></label>
+            <label>K max <input id="circleMapArnoldKMax" type="number" step="any" placeholder="4π" /></label>
+            <label>Iterations <input id="circleMapArnoldIterations" type="number" step="1" placeholder="mode default" /></label>
+            <label>Fixed-point tolerance <input id="circleMapArnoldTol" type="number" step="any" placeholder="mode default" /></label>
+            <label>Max phase samples <input id="circleMapArnoldMaxPhaseSamples" type="number" step="100" placeholder="mode default" /></label>
+            <label>Binary lock threshold <input id="circleMapArnoldLockThreshold" type="number" step="any" placeholder="0.5" /></label>
+            <label>Max analysis samples <input id="circleMapArnoldMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="circleMapArnoldSegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="circleMapArnoldSegmentEnd" type="number" step="any" placeholder="optional" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="circleMapArnoldRunBtn" class="primary" type="button">Run Circle Map Arnold Tongues</button>
+          <button id="circleMapArnoldCopyJsonBtn" type="button">Copy Circle Map JSON</button>
+        </div>
+        <div id="circleMapArnoldStatus" class="status">Ready to run circle-map fixed-point-locking analysis.</div>
+        <div id="circleMapArnoldResult" class="method-result-panel">
+          <div class="method-note">Ultra mode is the default. Full mode matches the notebook grid density: 150×150, 60 iterations, and up to 5000 phase samples.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="circleMapDensityTab" class="panel">
+      <div id="circleMapDensityDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">new v0.11.33</div>
+        <h2>Circle Map Converged Density</h2>
+        <p>Uses bandpassed EEG Hilbert phase from all available channels as circle-map initial conditions, iterates final-state probability distributions across K at fixed Ω, and generates the black/cyan density, concentration, resultant-length, and channel-summary plots from your script.</p>
+        <div class="grid two">
+          <div>
+            <label>Converted recording folder <input id="circleMapDensityRecordingDir" placeholder="blank/latest = newest converted recording" /></label>
+            <div class="button-row"><button id="circleMapDensityUseLatestBtn" type="button">Use Latest Recording</button></div>
+          </div>
+          <div>
+            <label>Speed mode
+              <select id="circleMapDensityMode">
+                <option value="ultra" selected>ultra</option>
+                <option value="fast">fast</option>
+                <option value="balanced">balanced</option>
+                <option value="full">full</option>
+              </select>
+            </label>
+            <label>Max channels <input id="circleMapDensityMaxChannels" type="number" step="1" placeholder="all" /></label>
+          </div>
+        </div>
+        <details>
+          <summary>Converged-density controls</summary>
+          <div class="grid two">
+            <label>Circle-map Ω <input id="circleMapDensityOmega" type="number" step="any" placeholder="1/3" /></label>
+            <label>K grid count <input id="circleMapDensityNK" type="number" step="1" placeholder="mode default" /></label>
+            <label>K min <input id="circleMapDensityKMin" type="number" step="any" placeholder="0" /></label>
+            <label>K max <input id="circleMapDensityKMax" type="number" step="any" placeholder="4π" /></label>
+            <label>Iterations <input id="circleMapDensityIterations" type="number" step="1" placeholder="mode default" /></label>
+            <label>Histogram bins <input id="circleMapDensityNBins" type="number" step="1" placeholder="mode default" /></label>
+            <label>Max phase samples/channel <input id="circleMapDensityMaxPhaseSamples" type="number" step="100" placeholder="mode default" /></label>
+            <label>Bandpass before Hilbert phase
+              <select id="circleMapDensityUseBandpass">
+                <option value="true" selected>true</option>
+                <option value="false">false</option>
+              </select>
+            </label>
+            <label>Phase band min Hz <input id="circleMapDensityPhaseMin" type="number" step="any" placeholder="1" /></label>
+            <label>Phase band max Hz <input id="circleMapDensityPhaseMax" type="number" step="any" placeholder="45" /></label>
+            <label>Filter order <input id="circleMapDensityFilterOrder" type="number" step="1" placeholder="4" /></label>
+            <label>Max analysis samples <input id="circleMapDensityMaxSamples" type="number" step="1000" placeholder="mode default" /></label>
+            <label>Segment start sec <input id="circleMapDensitySegmentStart" type="number" step="any" placeholder="optional" /></label>
+            <label>Segment end sec <input id="circleMapDensitySegmentEnd" type="number" step="any" placeholder="optional" /></label>
+            <label>Random seed <input id="circleMapDensitySeed" type="number" step="1" placeholder="42" /></label>
+          </div>
+        </details>
+        <div class="button-row big">
+          <button id="circleMapDensityRunBtn" class="primary" type="button">Run Circle Map Converged Density</button>
+          <button id="circleMapDensityCopyJsonBtn" type="button">Copy Circle Density JSON</button>
+        </div>
+        <div id="circleMapDensityStatus" class="status">Ready to run circle-map converged-density analysis.</div>
+        <div id="circleMapDensityResult" class="method-result-panel">
+          <div class="method-note">Ultra mode is the default. Full mode matches the notebook-style converged-density settings: 300 K values, 50 iterations, 50 bins, and up to 5000 phase samples per channel.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mfdfaViewerTab" class="panel">
+      <div id="mfdfaViewerDirectCard" class="card direct-analysis-card">
+        <div class="new-badge">v0.11.33</div>
+        <h2>MFDFA Plot Viewer</h2>
+        <p>Organizes the plots and summary CSVs produced by Manual Expert MFDFA. It creates the same contact sheets, individual image pages, ranked galleries, image inventory, metric rankings, normalized metric heatmap, and width-vs-asymmetry scatter from your notebook viewer.</p>
+        <div class="grid two">
+          <label>Converted recording folder <input id="mfdfaViewerRecordingDir" placeholder="latest or /path/to converted recording folder" value="latest" /></label>
+          <label>Viewer speed mode
+            <select id="mfdfaViewerMode">
+              <option value="ultra" selected>ultra</option>
+              <option value="fast">fast</option>
+              <option value="balanced">balanced</option>
+              <option value="full">full</option>
+            </select>
+          </label>
+          <label>Run Manual MFDFA first if per-channel images are missing
+            <select id="mfdfaViewerRunMissing">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
+          </label>
+          <label>Sort mode
+            <select id="mfdfaViewerSortMode">
+              <option value="multifractal_complexity_score" selected>multifractal_complexity_score</option>
+              <option value="alpha_width">alpha_width</option>
+              <option value="asymmetry">asymmetry</option>
+              <option value="file_size_kb">file_size_kb</option>
+            </select>
+          </label>
+          <label>Max images to show <input id="mfdfaViewerMaxImages" type="number" placeholder="mode default" /></label>
+          <label>Plots per page <input id="mfdfaViewerPlotsPerPage" type="number" placeholder="mode default" /></label>
+          <label>Max channels if running MFDFA first <input id="mfdfaViewerMaxChannels" type="number" placeholder="blank = all" /></label>
+          <label>Max analysis samples if running MFDFA first <input id="mfdfaViewerMaxSamples" type="number" placeholder="mode default" /></label>
+        </div>
+        <div class="button-row big">
+          <button id="mfdfaViewerUseLatestBtn" type="button">Use Latest Converted Recording</button>
+          <button id="mfdfaViewerRunBtn" class="primary" type="button">Run MFDFA Plot Viewer</button>
+          <button id="mfdfaViewerCopyJsonBtn" type="button">Copy Viewer JSON</button>
+        </div>
+        <div id="mfdfaViewerStatus" class="status">Ready to organize Manual Expert MFDFA plots.</div>
+        <div id="mfdfaViewerResult" class="method-result-panel">
+          <div class="method-note">MFDFA viewer plots will appear here after the backend method finishes.</div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="previewTab" class="panel">
+      <div class="grid two">
+        <div class="card">
+          <h2>Quick Dataset Preview</h2>
+          <p>This is our lightweight HTML preview generated from the same NeuroMouse <code>data.json</code>. Use NeuroMouse for the full workbench controls.</p>
+          <div id="previewMeta" class="output-path">No NeuroMouse dataset loaded yet.</div>
+          <canvas id="centroidPreview" class="preview-canvas" width="760" height="300"></canvas>
+          <canvas id="psdPreview" class="preview-canvas" width="760" height="300"></canvas>
+        </div>
+        <div class="card">
+          <h2>Comparison Preview</h2>
+          <p>When you run a NeuroMouse group comparison, this panel lists the generated sessions and opens the original NeuroMouse comparison workbench.</p>
+          <div id="comparisonPreview" class="comparison-preview">No comparison loaded yet.</div>
+          <div class="button-row">
+            <button id="openLatestNeuroMouseBtn" class="primary">Open Latest NeuroMouse Dataset</button>
+            <button id="openLatestNeuroMouseComparisonBtn" class="accent">Open Latest NeuroMouse Comparison</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="liveTab" class="panel">
+      <div class="card">
+        <h2>Live Replay Analysis</h2>
+        <p>Use a converted folder containing <code>signal.npy</code>, <code>channels.csv</code>, and <code>metadata.json</code>. This is prerecorded data replayed through the live backend.</p>
+        <div class="grid two">
+          <label>signal.npy path <input id="liveSignal" placeholder="/path/to/converted/signal.npy" /></label>
+          <label>channels.csv path <input id="liveChannels" placeholder="optional" /></label>
+          <label>metadata.json path <input id="liveMetadata" placeholder="optional" /></label>
+          <label>Sampling rate Hz <input id="liveFs" type="number" step="any" placeholder="auto / required if missing" /></label>
+          <label>Channel profile
+            <select id="liveProfile">
+              <option value="auto">Auto</option>
+              <option value="generated_numeric">Generated numeric</option>
+              <option value="eeg_10_10_common_32">EEG 10-10 common 32</option>
+              <option value="finalspark_32">FinalSpark 32</option>
+            </select>
+          </label>
+        </div>
+        <div class="button-row">
+          <button id="startLiveBtn" class="primary">Start Live Replay</button>
+          <button id="stopLiveBtn">Stop Current Live Job</button>
+          <a class="button-like" href="/live/raw" target="_blank">Open Raw View</a>
+          <a class="button-like" href="/live/spectral" target="_blank">Open Spectral View</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="compareTab" class="panel">
+      <div class="grid two">
+        <div class="card">
+          <h2>Group A</h2>
+          <textarea id="groupA" placeholder="One converted recording folder per line"></textarea>
+        </div>
+        <div class="card">
+          <h2>Group B</h2>
+          <textarea id="groupB" placeholder="One converted recording folder per line"></textarea>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Comparative Analysis</h2>
+        <p>Feature-level comparison is safe across variable electrode counts. Same-channel comparisons should only be used when channel names/layouts match exactly.</p>
+        <label>Comparison output folder <input id="compareOutput" placeholder="blank = app workspace output" /></label>
+        <label>Comparison name <input id="comparisonName" value="comparison" /></label>
+        <div class="button-row">
+          <button id="compareBtn" class="primary">Run Comparative Analysis</button>
+          <button id="neuromouseCompareBtn2" class="accent">Run + Prepare NeuroMouse</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultsTab" class="panel">
+      <div class="grid two">
+        <div class="card">
+          <h2>Progress Heartbeat</h2>
+          <div id="jobStatus" class="status big-status">No job running.</div>
+          <div class="progress-wrap"><div id="progressBar"></div></div>
+          <div id="currentStep">Current step: none</div>
+          <div id="completedStep">Completed step: none</div>
+          <div class="button-row">
+            <button id="openOutputBtn">Open Output Folder</button>
+            <button id="copyOutputBtn">Copy Output Path</button>
+            <a id="viewRawLogBtn" class="button-like disabled" href="#" target="_blank" rel="noopener">View Raw Job Log</a>
+            <a id="downloadRawLogBtn" class="button-like disabled" href="#" download>Download Raw Log</a>
+            <a id="downloadRawJsonlBtn" class="button-like disabled" href="#" download>Download JSONL Log</a>
+          </div>
+          <div id="outputPath" class="output-path"></div>
+          <div id="rawLogPath" class="output-path">Raw job log: none yet.</div>
+        </div>
+        <div class="card">
+          <h2>Latest Result</h2>
+          <pre id="resultJson">{}</pre>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Quick Analysis Preview</h2>
+        <p>After <strong>Analyze in NeuroMouse</strong>, this page remains open. When the job finishes, use the buttons below or the generated link in the output area to open the job-specific NeuroMouse URL such as <code>/neuromouse-job/&lt;job_id&gt;/</code>.</p>
+        <div id="resultsPreviewMeta" class="output-path">No analysis preview yet.</div>
+        <div class="button-row">
+          <button id="resultsOpenLatestNeuroMouseBtn" class="primary">Open Latest NeuroMouse Dataset</button>
+          <button id="resultsOpenLatestNeuroMouseComparisonBtn" class="accent">Open Latest NeuroMouse Comparison</button>
+        </div>
+      </div>
+      <details class="card">
+        <summary>Detailed browser event log</summary>
+        <p class="hint">This is the live browser event stream. Use <strong>View Raw Job Log</strong> for the saved backend/pipeline log in the output folder.</p>
+        <pre id="logBox"></pre>
+      </details>
+      <details class="card">
+        <summary>Raw backend job log preview</summary>
+        <p class="hint">This saved raw job log records backend steps, selected adapters, detected shapes, output paths, generated NeuroMouse dataset links, warnings, and errors. It does not dump raw neural samples.</p>
+        <pre id="rawLogPreview">No raw backend job log loaded yet.</pre>
+      </details>
+    </section>
+  </main>
+
+  <script src="/static/app.js?v=0.11.33-circle-density"></script>
+<!-- retained-test-marker: v0.11.32 — Minimal Dashboard; 0.11.32-neuromouse-choice -->
+</body>
+</html>

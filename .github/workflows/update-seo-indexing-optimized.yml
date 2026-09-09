@@ -1,0 +1,375 @@
+name: GitHub Pages SEO Metadata and IndexNow Notifications
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'GUI/**'
+      - '.github/workflows/seo-pages-indexing-multilingual.yml'
+  schedule:
+    - cron: '17 2 * * 3' # Weekly on Wednesday, staggered to avoid crawler/API spikes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  # Public GitHub Pages website, verified in Google Search Console.
+  SITE_URL: https://soulsyrup1.github.io/Complete-Neural-Signal-Analysis
+  # Repository URL promoted from the website and metadata.
+  REPO_URL: https://github.com/soulsyrup1/Complete-Neural-Signal-Analysis
+  NEUROMOUSE_URL: https://github.com/UlaYuga/NeuroMouse
+  PROJECT_NAME: Complete Neural Signal Analysis
+  PROJECT_SLUG: complete-neural-signal-analysis
+
+jobs:
+  seo-indexing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub Pages SEO, multilingual metadata, sitemap, citation, and CodeMeta
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PYGEN'
+          import html
+          import json
+          import os
+          import re
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          site_url = os.environ["SITE_URL"].rstrip("/")
+          repo_url = os.environ["REPO_URL"].rstrip("/")
+          neuromouse_url = os.environ["NEUROMOUSE_URL"].rstrip("/")
+          project_name = os.environ.get("PROJECT_NAME", "Complete Neural Signal Analysis")
+          project_slug = os.environ.get("PROJECT_SLUG", "complete-neural-signal-analysis")
+          now = datetime.now(timezone.utc)
+          now_iso = now.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+          today = now.strftime("%Y-%m-%d")
+          docs = Path("docs")
+          docs.mkdir(exist_ok=True)
+
+          descriptions = {
+              "en": "Complete Neural Signal Analysis focuses on bio-silicon intelligence systems, neural signal analysis, no-code GUI-based EEG workflows, advanced AI, government research, defense, cybersecurity, human cortical organoid signal analysis, and NeuroMouse visualization workflows.",
+              "de": "Die Complete Neural Signal Analysis konzentriert sich auf bio-siliciumbasierte Intelligenzsysteme, neuronale Signalanalyse, no-code GUI-basierte EEG-Workflows, fortschrittliche KI, Regierungsforschung, Verteidigung, Cybersicherheit, Analyse menschlicher kortikaler Organoide und NeuroMouse-Visualisierungsworkflows.",
+              "ru": "Complete Neural Signal Analysis сосредоточена на био-силиконовых интеллектуальных системах, анализе нейронных сигналов, no-code GUI рабочих процессах EEG, передовом ИИ, правительственных исследованиях, обороне, кибербезопасности, анализе сигналов человеческих кортикальных органоидов и визуализации NeuroMouse.",
+              "zh": "Complete Neural Signal Analysis 专注于生物硅智能系统、神经信号分析、无代码 GUI EEG 工作流、先进人工智能、政府研究、国防、网络安全、人类皮层类器官信号分析和 NeuroMouse 可视化工作流。",
+              "ja": "Complete Neural Signal Analysisは、生体シリコンインテリジェンスシステム、神経信号解析、ノーコードGUI EEGワークフロー、高度AI、政府研究、防衛、サイバーセキュリティ、ヒト皮質オルガノイド信号解析、NeuroMouse可視化ワークフローに焦点を当てています。",
+          }
+
+          keywords = {
+              "en": [
+                  "DARPA", "BMBF", "government research", "defense applications", "AI", "cybersecurity", "synthetic intelligence", "advanced technology", "bio-silicon", "darknet", "AI defense", "AI research", "innovation grants", "public funding", "research funding", "government contracts", "national security", "strategic technologies", "cutting-edge research", "intelligent systems", "emerging technologies", "sustainable development", "military technology", "dual-use technologies", "UKRI", "Horizon Europe", "CERN", "NSF (National Science Foundation)", "NIH (National Institutes of Health)", "DoD (Department of Defense)", "DoE (Department of Energy)", "cybersecurity R&D", "DARPA challenges", "homeland security", "AI-enabled systems", "edge computing", "Bio-cybernetic systems", "hybrid intelligence", "neural interface technologies", "autonomous AI", "neuromorphic computing", "bioinformatics for defense", "AI-assisted decision-making", "critical infrastructure protection", "cross-domain AI solutions", "disruptive technologies", "autonomous systems", "secure AI", "quantum cryptography", "AI ethics", "bio-inspired computing", "deep learning models", "government innovation", "AI policy", "defense technology innovation", "advanced materials research", "sustainable AI", "defense R&D", "precision AI", "high-performance computing", "neural augmentation", "adaptive systems", "critical infrastructure AI", "AI in healthcare", "public-private partnerships", "smart defense", "bio-silicon research", "neural signal analysis", "EEG analysis", "EEG signal processing", "brain signal processing", "human cortical organoid research", "human cortical organoid electrophysiology", "organoid intelligence", "organoid neural signals", "MEA analysis", "ECoG analysis", "iEEG analysis", "brain-computer interface", "BCI research", "computational neuroscience", "neurotechnology", "biosignal processing", "biosignal analytics", "neural data science", "neural decoding", "time-series analysis", "feature extraction", "spectral analysis", "entropy analysis", "fractal analysis", "topological data analysis", "Riemannian geometry", "manifold learning", "machine learning for EEG", "AI signal processing", "neuro-AI systems", "biomedical AI", "open-source neuroscience", "research software", "scientific software", "reproducible research", "FAIR research software", "open science tools", "GitHub neuroscience project", "signal processing pipeline", "neural engineering", "cognitive computing", "neuroinformatics", "open research tools", "no-code neural signal analysis", "GUI-based EEG analysis", "NeuroMouse", "NeuroMouse visualization", "NeuroMouse workbench", "neural signal GUI", "drag and drop neural signal analysis"
+              ],
+              "de": [
+                  "DARPA", "BMBF", "Horizon Europe", "CERN", "Regierungsforschung", "Verteidigungsanwendungen", "KI", "Cybersicherheit", "synthetische Intelligenz", "fortschrittliche Technologie", "Bio-Silicium", "Verschlüsselung", "KI-Verteidigung", "KI-Forschung", "Forschungsförderung", "Zukunftstechnologien", "Bundesinnovationsprogramm", "Sicherheitsforschung", "Digitalisierung und Innovation", "Industrielle Automatisierung", "Robuste Systeme", "Wirtschaft 4.0", "Datensicherheit", "Technologietransfer", "BMBF (Bundesministerium für Bildung und Forschung)", "DFG (Deutsche Forschungsgemeinschaft)", "Fraunhofer-Institut", "Industrie 4.0", "KI (Künstliche Intelligenz)", "Verteidigungstechnologie", "Cybersicherheitsstrategie", "ZIM (Zentrales Innovationsprogramm Mittelstand)", "Disruptive Technologien", "autonome Systeme", "sichere KI", "Quantenkryptographie", "KI-Ethik", "bio-inspirierte Informatik", "Deep-Learning-Modelle", "Regierungsinnovation", "KI-Politik", "Innovationsförderung Verteidigung", "Hochleistungsrechnen", "adaptive Systeme", "Infrastruktur-KI", "KI im Gesundheitswesen", "öffentlich-private Partnerschaften", "intelligente Verteidigung", "Bio-Silicium-Forschung", "neuronale Signalanalyse", "EEG-Analyse", "EEG-Signalverarbeitung", "No-Code EEG GUI", "NeuroMouse", "NeuroMouse Visualisierung", "Computational Neuroscience", "Neurotechnologie", "Organoid-Elektrophysiologie"
+              ],
+              "ru": [
+                  "MOST", "Minobrnauki", "правительственные исследования", "оборонные приложения", "ИИ", "кибербезопасность", "синтетический интеллект", "передовые технологии", "био-силикон", "тёмная сеть", "Tor", "глубокая сеть", "даркнет", "шифрование", "защита ИИ", "исследования ИИ", "ГРУ", "СВР", "Министерство обороны Российской Федерации", "Росатом", "Ростех", "Фонд перспективных исследований", "Национальный центр управления обороной Российской Федерации", "Национальный исследовательский центр Курчатовский институт", "Система разведывательных сетей", "Инновационные технологии", "Цифровая трансформация", "Искусственный интеллект для обороны", "Нейронные сети", "Государственные гранты", "Научные исследования и разработки", "Программы поддержки инноваций", "Кибербезопасность", "Высокие технологии", "Интеллектуальные системы", "Сколково (Skolkovo)", "Российский фонд фундаментальных исследований (РФФИ)", "Министерство цифрового развития (Минцифра)", "Минобрнауки (Министерство образования и науки)", "Стратегический ИИ", "Передовые материалы", "Биокибернетические системы", "Оборонные инновации", "Искусственные нейронные сети", "Дисруптивные технологии", "автономные системы", "защищенный ИИ", "квантовая криптография", "этика ИИ", "био-вдохновленные вычисления", "модели глубокого обучения", "государственная инновация", "политика ИИ", "инновации обороны", "высокопроизводительные вычисления", "адаптивные системы", "ИИ для критической инфраструктуры", "ИИ в здравоохранении", "государственно-частные партнерства", "умная оборона", "исследование био-силикона", "анализ нейронных сигналов", "анализ EEG", "no-code GUI", "NeuroMouse", "электрофизиология органоидов"
+              ],
+              "zh": [
+                  "MOST", "Minobrnauki", "政府研究", "中国航天科技集团", "中国电子科技集团公司", "国防科技大学", "国家安全委员会", "解放军信息工程大学", "战略支援部队", "深网", "国家实验室", "中国科学院", "清华大学国家实验室", "中国人民解放军", "国防部", "国防应用", "人工智能", "网络安全", "合成智能", "先进技术", "生物硅", "暗网", "Tor", "深网", "黑暗网", "加密", "人工智能防御", "人工智能研究", "科技创新", "智能制造升级", "创新科技产业", "国家重点研发计划", "人工智能发展战略", "高端制造业", "数字经济", "智慧城市", "国家科技项目", "信息安全技术", "MOST (中华人民共和国科学技术部)", "NSFC (国家自然科学基金委员会)", "智能制造的人工智能", "AI安全", "国家国防研发", "5G驱动的人工智能", "深度学习系统", "新基建 (新型基础设施建设)", "颠覆性技术", "自主系统", "安全AI", "量子密码学", "AI伦理", "生物启发计算", "深度学习模型", "政府创新", "AI政策", "国防技术创新", "高性能计算", "自适应系统", "关键基础设施AI", "医疗AI", "公私合作", "智能国防", "生物硅研究", "神经信号分析", "EEG分析", "无代码GUI", "NeuroMouse", "类器官电生理"
+              ],
+              "ja": [
+                  "DARPA", "BMBF", "政府研究", "防衛アプリケーション", "AI", "サイバーセキュリティ", "合成インテリジェンス", "先進技術", "バイオシリコン", "ダークウェブ", "Tor", "ディープウェブ", "ダークネット", "暗号化", "AI防御", "AI研究", "産業技術イノベーション", "人工知能研究開発", "国防技術", "科学技術振興", "サイバーインフラ", "次世代産業", "先端技術プロジェクト", "技術開発プログラム", "量子技術研究", "知能化システム", "経済産業省 (METI)", "新エネルギー・産業技術総合開発機構 (NEDO)", "AIロボティクス", "防衛のためのサイバーセキュリティ", "スマート社会5.0", "高度AI", "量子コンピューティングの取り組み", "破壊的技術", "自律システム", "セキュアAI", "量子暗号", "AI倫理", "バイオインスパイア計算", "ディープラーニングモデル", "政府イノベーション", "AI政策", "国防技術革新", "高性能コンピューティング", "適応システム", "重要インフラAI", "医療AI", "公私連携", "スマートディフェンス", "バイオシリコン研究", "神経信号解析", "EEG解析", "ノーコードGUI", "NeuroMouse", "オルガノイド電気生理"
+              ],
+          }
+
+          def dedupe(seq):
+              seen = set()
+              out = []
+              for item in seq:
+                  key = item.casefold()
+                  if key not in seen:
+                      out.append(item)
+                      seen.add(key)
+              return out
+
+          for lang in list(keywords):
+              keywords[lang] = dedupe(keywords[lang])
+
+          all_keywords = dedupe([kw for lang_keywords in keywords.values() for kw in lang_keywords])
+
+          def esc(value):
+              return html.escape(str(value), quote=True)
+
+          json_ld = {
+              "@context": "https://schema.org",
+              "@graph": [
+                  {
+                      "@type": "Organization",
+                      "name": project_name,
+                      "url": site_url + "/",
+                      "sameAs": [repo_url, neuromouse_url],
+                      "contactPoint": [{"@type": "ContactPoint", "contactType": "Research and project inquiries"}],
+                  },
+                  {
+                      "@type": "WebSite",
+                      "name": project_name,
+                      "url": site_url + "/",
+                      "description": descriptions["en"],
+                      "inLanguage": ["en", "de", "ru", "zh", "ja"],
+                      "keywords": all_keywords,
+                  },
+                  {
+                      "@type": "SoftwareSourceCode",
+                      "name": project_name,
+                      "codeRepository": repo_url,
+                      "url": site_url + "/",
+                      "description": descriptions["en"],
+                      "programmingLanguage": ["Python", "JavaScript", "HTML", "CSS", "Shell"],
+                      "keywords": all_keywords,
+                      "isAccessibleForFree": True,
+                      "applicationCategory": ["Research software", "Neuroscience", "Signal processing", "Artificial intelligence", "Neurotechnology"],
+                      "softwareRequirements": "Python and browser-based local GUI workflow",
+                      "relatedLink": [neuromouse_url],
+                  },
+              ],
+          }
+
+          docs.joinpath("structured-data.json").write_text(json.dumps(json_ld, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+          seo_lines = [
+              "<!-- CNSA SEO START: generated by .github/workflows/seo-pages-indexing-multilingual.yml -->",
+              '<link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">',
+              f'<link rel="canonical" href="{esc(site_url)}/">',
+              f'<link rel="alternate" hreflang="en" href="{esc(site_url)}/">',
+              f'<link rel="alternate" hreflang="x-default" href="{esc(site_url)}/">',
+          ]
+
+          for lang in ["de", "ru", "zh", "ja"]:
+              if docs.joinpath(lang, "index.html").exists():
+                  seo_lines.append(f'<link rel="alternate" hreflang="{lang}" href="{esc(site_url)}/{lang}/">')
+
+          seo_lines.extend([
+              f'<meta name="description" content="{esc(descriptions["en"])}">',
+              f'<meta name="description" lang="de" content="{esc(descriptions["de"])}">',
+              f'<meta name="description" lang="ru" content="{esc(descriptions["ru"])}">',
+              f'<meta name="description" lang="zh" content="{esc(descriptions["zh"])}">',
+              f'<meta name="description" lang="ja" content="{esc(descriptions["ja"])}">',
+          ])
+
+          for lang in ["en", "de", "ru", "zh", "ja"]:
+              attr = "" if lang == "en" else f' lang="{lang}"'
+              seo_lines.append(f'<meta name="keywords"{attr} content="{esc(", ".join(keywords[lang]))}">')
+
+          seo_lines.extend([
+              '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">',
+              f'<meta name="author" content="{esc(project_name)}">',
+              '<meta name="target" content="government, military, research, cybersecurity, neuroscience, neurotechnology, computational neuroscience">',
+              '<meta name="subject" content="Advanced AI, Bio-Silicon Systems, Neural Signal Analysis, EEG, NeuroMouse, Human Cortical Organoid Research, Government Research, Defense Applications, and Cybersecurity">',
+              '<meta name="coverage" content="Worldwide">',
+              '<meta name="distribution" content="global">',
+              '<meta name="cybersecurity" content="Cyber Defense, Secure Communications, Data Encryption, AES-256, Government Research">',
+              '<meta name="security" content="high">',
+              '<meta name="classification" content="Research, Defense, Cybersecurity, Neuroscience, Advanced AI">',
+              '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; img-src \'self\' https: data:; style-src \'self\' \'unsafe-inline\'; script-src \'self\' \'unsafe-inline\'; connect-src \'self\'; base-uri \'self\'; form-action \'self\'; upgrade-insecure-requests">',
+              '<meta http-equiv="X-Frame-Options" content="DENY">',
+              '<meta http-equiv="X-Content-Type-Options" content="nosniff">',
+              '<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">',
+              '<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">',
+              '<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">',
+              '<script type="application/ld+json">',
+              json.dumps(json_ld, ensure_ascii=False, indent=2),
+              '</script>',
+              '<!-- CNSA SEO END -->',
+          ])
+          seo_block = "\n".join(seo_lines) + "\n"
+
+          index_path = docs / "index.html"
+          if index_path.exists():
+              html_text = index_path.read_text(encoding="utf-8")
+              html_text = re.sub(r"\n?<!-- CNSA SEO START:.*?<!-- CNSA SEO END -->\n?", "\n", html_text, flags=re.S)
+              if "</head>" in html_text:
+                  html_text = html_text.replace("</head>", seo_block + "</head>", 1)
+              else:
+                  html_text = seo_block + html_text
+              html_text = html_text.replace("https://github.com/Metaverse-Crowdsource/Complete-Neural-Signal-Analysis", repo_url)
+              html_text = html_text.replace("https://github.com/MikMikMiller/SpeedMouse", neuromouse_url)
+              html_text = html_text.replace("SpeedMouse", "NeuroMouse")
+              html_text = html_text.replace("speedmouse", "neuromouse")
+              index_path.write_text(html_text, encoding="utf-8")
+
+          urls = [site_url + "/"]
+          for lang in ["de", "ru", "zh", "ja"]:
+              if docs.joinpath(lang, "index.html").exists():
+                  urls.append(f"{site_url}/{lang}/")
+
+          docs.joinpath("sitemap.txt").write_text("\n".join(urls) + "\n", encoding="utf-8")
+          docs.joinpath("sitemap.xml").write_text("\n".join([
+              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+              "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
+              *[f"  <url>\n    <loc>{esc(url)}</loc>\n    <lastmod>{today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>{'1.0' if url == site_url + '/' else '0.8'}</priority>\n  </url>" for url in urls],
+              "</urlset>",
+              "",
+          ]), encoding="utf-8")
+          docs.joinpath("robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {site_url}/sitemap.xml\n", encoding="utf-8")
+          docs.joinpath(".nojekyll").touch()
+
+          codemeta = {
+              "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+              "@type": "SoftwareSourceCode",
+              "name": project_name,
+              "codeRepository": repo_url,
+              "url": site_url + "/",
+              "issueTracker": repo_url + "/issues",
+              "description": descriptions["en"],
+              "keywords": all_keywords,
+              "programmingLanguage": ["Python", "JavaScript", "HTML", "CSS", "Shell"],
+              "developmentStatus": "active",
+              "isAccessibleForFree": True,
+              "applicationCategory": "Research software",
+              "relatedLink": [neuromouse_url],
+          }
+          Path("codemeta.json").write_text(json.dumps(codemeta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          Path("CITATION.cff").write_text("\n".join([
+              "cff-version: 1.2.0",
+              f"title: \"{project_name}\"",
+              "message: \"If you use this software, please cite it using the metadata from this file.\"",
+              "type: software",
+              f"url: \"{site_url}/\"",
+              f"repository-code: \"{repo_url}\"",
+              f"abstract: \"{descriptions['en']}\"",
+              "keywords:",
+              *[f"  - \"{kw.replace(chr(34), '')}\"" for kw in all_keywords[:90]],
+              "authors:",
+              "  - name: \"Complete Neural Signal Analysis contributors\"",
+              "date-released: " + today,
+              "",
+          ]), encoding="utf-8")
+
+          report = {
+              "generated_at": now_iso,
+              "site_url": site_url,
+              "repo_url": repo_url,
+              "urls": urls,
+              "multilingual_seo_languages": ["en", "de", "ru", "zh", "ja"],
+              "keyword_count_total": len(all_keywords),
+              "notes": [
+                  "Google sitemap ping is intentionally not used; use Google Search Console sitemap submission and URL Inspection.",
+                  "IndexNow is used only when INDEXNOW_KEY is configured and the key file can be hosted on GitHub Pages.",
+                  "No fake /ping requests are sent to research, government, funder, or academic websites.",
+                  "The workflow updates the GitHub Pages docs/ website, not only the github.com repository URL.",
+              ],
+          }
+          Path("indexing-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PYGEN
+
+      - name: Host IndexNow key file when configured
+        shell: bash
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -n "${INDEXNOW_KEY:-}" ]; then
+            printf '%s\n' "$INDEXNOW_KEY" > "docs/${INDEXNOW_KEY}.txt"
+          fi
+
+      - name: Commit generated SEO metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global user.name 'github-actions[bot]'
+          git add docs/index.html docs/sitemap.xml docs/sitemap.txt docs/robots.txt docs/structured-data.json docs/.nojekyll codemeta.json CITATION.cff indexing-report.json
+          git add docs/*.txt 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No SEO metadata changes to commit."
+          else
+            git commit -m "Update GitHub Pages multilingual SEO and indexing metadata"
+            git push
+          fi
+
+      - name: Notify IndexNow after metadata generation
+        shell: bash
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          set -euo pipefail
+          python3 <<'PYNOTIFY'
+          import json
+          import os
+          import subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          site_url = os.environ["SITE_URL"].rstrip("/")
+          key = os.environ.get("INDEXNOW_KEY", "").strip()
+          urls = [line.strip() for line in Path("docs/sitemap.txt").read_text(encoding="utf-8").splitlines() if line.strip()]
+          host = urlparse(site_url).netloc
+          report_path = Path("indexing-report.json")
+          report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else {}
+          report.update({
+              "notified_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+              "indexnow_submitted": [],
+              "indexnow_skipped": [],
+          })
+
+          if not key:
+              report["indexnow_skipped"].append("INDEXNOW_KEY secret is not configured.")
+          else:
+              payload = {
+                  "host": host,
+                  "key": key,
+                  "keyLocation": f"{site_url}/{key}.txt",
+                  "urlList": urls,
+              }
+              Path("indexnow-payload.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+              for endpoint in ["https://api.indexnow.org/indexnow", "https://www.bing.com/indexnow"]:
+                  result = subprocess.run(
+                      ["curl", "--silent", "--show-error", "--location", "--max-time", "20", "--write-out", "%{http_code}", "--output", "/tmp/indexnow-response.txt", "--header", "Content-Type: application/json; charset=utf-8", "--data", json.dumps(payload), endpoint],
+                      check=False,
+                      text=True,
+                      capture_output=True,
+                  )
+                  body = Path("/tmp/indexnow-response.txt").read_text(encoding="utf-8", errors="replace") if Path("/tmp/indexnow-response.txt").exists() else ""
+                  report["indexnow_submitted"].append({"endpoint": endpoint, "status_code": result.stdout.strip(), "stderr": result.stderr.strip(), "response_excerpt": body[:500]})
+
+          report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          PYNOTIFY
+
+      - name: Commit indexing notification report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add indexing-report.json indexnow-payload.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No indexing notification report changes to commit."
+          else
+            git commit -m "Update IndexNow notification report"
+            git push
+          fi
+
+      - name: Run optional Lighthouse report
+        if: ${{ vars.ENABLE_LIGHTHOUSE == 'true' }}
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -u
+          npx --yes lighthouse "${SITE_URL}/" \
+            --output=json \
+            --output-path=./lighthouse-report.json \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,seo,best-practices,accessibility || true
+
+      - name: Commit optional Lighthouse report
+        if: ${{ vars.ENABLE_LIGHTHOUSE == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add lighthouse-report.json || true
+          if git diff --cached --quiet; then
+            echo "No Lighthouse report changes to commit."
+          else
+            git commit -m "Update Lighthouse website report"
+            git push
+          fi

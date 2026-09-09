@@ -1,0 +1,7 @@
+neuro_importer
+neuro_importer_analysis
+neuro_importer_frontend
+neuro_importer_live
+neuro_importer_neuromouse
+neuro_importer_speedmouse
+neuro_signal_webapp

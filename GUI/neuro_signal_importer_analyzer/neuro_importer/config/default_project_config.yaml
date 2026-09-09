@@ -1,0 +1,77 @@
+project_name: neuro_signal_importer_project
+
+scan:
+  include_extensions:
+    - .mat
+    - .set
+    - .edf
+    - .bdf
+    - .csv
+    - .tsv
+    - .xlsx
+    - .npy
+    - .npz
+    - .h5
+    - .hdf5
+    - .nwb
+  exclude_dir_names:
+    - .git
+    - __pycache__
+    - converted
+    - outputs
+    - output
+  max_files: null
+
+conversion:
+  min_confidence: 0.5
+  include_aux: false
+  export_neural_signal: false
+  write_tree_report: true
+
+export:
+  # npy is the safest default. For huge MEA files, use memmap, hdf5, or zarr.
+  format: npy
+  save_signal_csv: false
+  csv_max_mb: 250.0
+  compression: gzip
+
+units:
+  # Leave null unless you know the source units/scale. This is applied after adapter-specific scaling.
+  original_units: null
+  target_units: null
+  scale_factor: null
+  offset: null
+
+preprocessing:
+  enabled: false
+  demean: false
+  detrend: false
+  notch_hz: null
+  bandpass_hz: null
+  downsample_to_hz: null
+  normalization: null
+  astype: float32
+
+windowing:
+  enabled: false
+  window_seconds: null
+  window_samples: null
+  step_seconds: null
+  step_samples: null
+  drop_last: true
+  max_windows: null
+  astype: float32
+
+qc:
+  enabled: true
+  flat_std_threshold: 1.0e-12
+  nan_fraction_warn: 0.01
+  outlier_z_warn: 12.0
+
+channels:
+  exclude_patterns:
+    - "^AUX"
+    - "^RESP"
+    - "^TRIG"
+    - "^STIM"
+    - "^BIP"

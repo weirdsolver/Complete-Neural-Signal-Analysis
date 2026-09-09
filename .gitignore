@@ -1,0 +1,170 @@
+```gitignore
+# =======================================================
+# WHITELIST-STYLE .gitignore
+# Ignore everything by default, then explicitly include
+# only the source/repo assets we want tracked.
+# =======================================================
+
+# Ignore everything at repo root
+/*
+
+# But keep git config files
+!/.gitignore
+!/.gitattributes
+
+# Keep docs / license / small tracked data
+!/LICENSE.md
+!/README.md
+!/Readme.md
+!/INDEXING.md
+!/INDEXING_AND_PUBLICITY_TARGETS.md
+!/stim_data.xlsx
+
+# Keep SEO / indexing / research metadata
+!/robots.txt
+!/sitemap.xml
+!/sitemap.txt
+!/structured-data.json
+!/codemeta.json
+!/CITATION.cff
+!/indexing-report.json
+
+# Keep GitHub workflow directory
+!/.github/
+!/.github/workflows/
+!/.github/workflows/**
+
+# Keep source / project directories
+!/Data_Loading_and_Variable_Assigning_files/
+!/Data_Loading_and_Variable_Assigning_files/**
+
+!/Dynamical_Systems/
+!/Dynamical_Systems/**
+
+!/Entropy/
+!/Entropy/**
+
+!/Fractal/
+!/Fractal/**
+
+!/Geometry/
+!/Geometry/**
+
+!/Library/
+!/Library/neural_signal_analysis/
+!/Library/neural_signal_analysis/**
+
+!/Neural Net_files/
+!/Neural Net_files/**
+
+!/Quantum Analysis/
+!/Quantum Analysis/**
+
+!/Spectral Analysis/
+!/Spectral Analysis/**
+
+!/Topology/
+!/Topology/**
+
+!/docs/
+!/docs/**
+
+# =======================================================
+# Still ignore junk inside allowed directories
+# =======================================================
+
+# Python cache/build files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local environments
+.conda*/
+.conda-*/
+.conda-py310/
+conda-meta/
+env/
+envs/
+ENV/
+.venv/
+venv/
+.miniconda*/
+miniconda*/
+.anaconda*/
+site-packages/
+pip-wheel-metadata/
+
+# Conda/package archives
+*.conda
+*.tar.bz2
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+temp_concat_chunk_*.pt
+
+# Logs / ML artifacts
+lightning_logs/
+runs/
+wandb/
+mlruns/
+
+# Common large/generated scientific artifacts
+*.npy
+*.npz
+*.mat
+*.pt
+*.pth
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.joblib
+*.parquet
+*.feather
+
+# Generated tables / outputs
+*.csv
+*.tsv
+
+# Generated images / plots
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.gif
+*.webp
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.bz2
+*.xz
+*.7z
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+```
+# =======================================================
+# Always keep the complete GUI folder and all contents
+# =======================================================
+!/GUI/
+!/GUI/**

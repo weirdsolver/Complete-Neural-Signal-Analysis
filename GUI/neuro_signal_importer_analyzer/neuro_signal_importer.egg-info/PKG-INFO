@@ -1,0 +1,426 @@
+Metadata-Version: 2.4
+Name: neuro-signal-importer
+Version: 0.11.33
+Summary: Complete continuous neural signal system with HTML/FastAPI launcher, custom NeuroMouse workbench integration, archive/MAT conversion, live replay, comparative analysis, advanced NeuroMouse visualizations, variable-electrode support, and no bundled vendor copy.
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.24
+Requires-Dist: pandas>=2.0
+Requires-Dist: scipy>=1.10
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: mat73
+Requires-Dist: mat73>=0.62; extra == "mat73"
+Requires-Dist: h5py>=3.8; extra == "mat73"
+Provides-Extra: hdf5
+Requires-Dist: h5py>=3.8; extra == "hdf5"
+Requires-Dist: tables>=3.8; extra == "hdf5"
+Provides-Extra: io
+Requires-Dist: h5py>=3.8; extra == "io"
+Requires-Dist: openpyxl>=3.1; extra == "io"
+Requires-Dist: tables>=3.8; extra == "io"
+Provides-Extra: edf
+Requires-Dist: mne>=1.6; extra == "edf"
+Provides-Extra: nwb
+Requires-Dist: pynwb>=2.6; extra == "nwb"
+Requires-Dist: h5py>=3.8; extra == "nwb"
+Provides-Extra: zarr
+Requires-Dist: zarr>=2.16; extra == "zarr"
+Provides-Extra: frontend
+Requires-Dist: fastapi>=0.110; extra == "frontend"
+Requires-Dist: uvicorn>=0.25; extra == "frontend"
+Requires-Dist: python-multipart>=0.0.9; extra == "frontend"
+Provides-Extra: live
+Requires-Dist: pyzmq>=25; extra == "live"
+Requires-Dist: websockets>=11; extra == "live"
+Provides-Extra: all
+Requires-Dist: mat73>=0.62; extra == "all"
+Requires-Dist: h5py>=3.8; extra == "all"
+Requires-Dist: openpyxl>=3.1; extra == "all"
+Requires-Dist: mne>=1.6; extra == "all"
+Requires-Dist: tables>=3.8; extra == "all"
+Requires-Dist: pynwb>=2.6; extra == "all"
+Requires-Dist: zarr>=2.16; extra == "all"
+Requires-Dist: pyzmq>=25; extra == "all"
+Requires-Dist: websockets>=11; extra == "all"
+Requires-Dist: fastapi>=0.110; extra == "all"
+Requires-Dist: uvicorn>=0.25; extra == "all"
+Requires-Dist: python-multipart>=0.0.9; extra == "all"
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+
+# Neuro Signal Importer Analyzer
+
+## v0.11.33 — Circle Map Converged Density
+
+Version 0.11.33 adds a native **Circle Map Converged Density** workflow adapted from the EEG Hilbert-phase final-state-density script. It uses bandpassed per-channel Hilbert phase as initial circle-map conditions, iterates final-state probability distributions across K at fixed Ω, and saves the full black/cyan plotting set: aggregate final-state density heatmap, circular mean vs K, normalized concentration vs K, resultant length vs K, channel concentration/resultant summaries, initial phase distribution by channel, and selected final-state distributions. Speed modes default to `ultra`; `full` matches the notebook-style 300 K values, 50 iterations, 50 histogram bins, and up to 5000 phase samples per channel.
+
+
+**Version:** `0.11.33`  
+
+
+## v0.11.32 — NeuroMouse opening behavior fix
+
+Version 0.11.32 keeps the Neuro Signal app page open after conversion or NeuroMouse analysis jobs finish. Generated NeuroMouse URLs are now shown as explicit links/buttons, and users choose when to open the NeuroMouse workbench in a separate tab instead of the app automatically navigating the current window.
+
+## v0.11.32 — Multi-file progress-bar and NeuroMouse export fix
+
+Version 0.11.32 fixes the web launcher loading/progress bar for multi-file conversion jobs. Converter callbacks can emit nested step events such as `Read source file complete percent=100` followed by the next file starting at `10%`; the app now maps those local step percentages into a monotonic job-level range and only treats overall `state` events as job completion. The progress bar is clamped to 0–100%, cannot move backward during a running job, and shows `Full (100%)` only when the whole job finishes. This release also replaces NumPy `trapz` calls with a `trapezoid`-compatible helper so NeuroMouse `data.json` generation works in NumPy builds where `np.trapz` is unavailable.
+
+## v0.11.32 — Circle Map Arnold Tongues
+
+Version 0.11.32 adds a native **Circle Map Arnold Tongues** workflow adapted from the fixed-point-locking circle-map script. It extracts instantaneous phase with the Hilbert transform across all available channels, computes an EEG-derived circular mean phase, and evaluates fixed-point locking probability over a configurable Ω/K grid. Speed modes default to `ultra`; `full` matches the notebook-style 150×150 grid, 60 iterations, and up to 5000 phase samples.
+
+The backend saves `circle_map_fixed_point_locking_results.npz`, `circle_map_fixed_point_locking_grid.csv`, `eeg_derived_mean_phase_samples.csv`, and `circle_map_fixed_point_locking_summary.txt`, and renders the notebook-style black/cyan plots: fixed-point-locking heatmap, theoretical fixed-point boundary overlay, mean locking across K, mean locking across Ω, EEG-derived phase histogram, phase-sample trace, and thresholded locking map.
+
+**Default UI:** minimal dashboard for importing datasets, comparing datasets, and running fractal-dimension analyses.
+
+Neuro Signal Importer Analyzer converts continuous neural recordings into a canonical local format and provides a browser GUI for analysis and visualization. It supports EEG, ECoG, iEEG, MEA/organoid recordings, MATLAB/NumPy/CSV/HDF5/NWB-style exports, and ZIP archives containing supported neural files.
+
+The canonical recording model is:
+
+```text
+samples × channels continuous signal
++ channel/electrode metadata
++ sampling/time metadata
++ provenance and quality reports
++ optional analysis outputs
+```
+
+
+## v0.11.32 — Phase-forced Arnold Tongues / Kuramoto diagnostics
+
+Version 0.11.32 upgrades the native **Arnold Tongues / Kuramoto** workflow with the phase-forced drive model from the latest notebook-style script. The backend now uses `a * sin(2*pi*b*t - theta_i)` as the external drive, keeps speed modes defaulted to `ultra`, and adds drive-locking, collective drive-locking, frequency-error, synchronization contrast, and drive-locking contrast diagnostics in addition to the existing EEG-derived natural-frequency summaries.
+
+New plots include drive-locking Arnold tongue heatmaps, collective phase drive-locking, frequency-error heatmaps, visible-scale and honest-scale mean synchronization, synchronization and drive-locking contrasts, frequency-error contrast, dominant-frequency and omega rankings, dominant-frequency-vs-omega scatter, and line summaries for synchronization, drive-locking, and frequency error versus both drive amplitude and drive frequency.
+
+
+## v0.11.32 — Arnold Tongues / Kuramoto
+
+Version 0.11.32 adds a native **Arnold Tongues / Kuramoto** workflow adapted from the driven Kuramoto notebook. It estimates one dominant EEG frequency per channel from the converted `signal.npy`, normalizes those into dimensionless natural frequencies, then simulates a driven Kuramoto model over an Arnold tongue grid of drive amplitude `a` and drive frequency `b`.
+
+The workflow runs all available channels by default and defaults to `ultra` speed. Speed modes scale the Arnold tongue grid density, simulation duration, time samples, solver tolerances, and analysis sample cap:
+
+- `ultra`: compact grid and short simulation for quick checks.
+- `fast`: moderate grid and simulation length.
+- `balanced`: closer to notebook-style exploration.
+- `full`: 50×50 grid and longer simulation matching the original notebook settings most closely.
+
+Outputs are saved under `<recording>/advanced_methods/arnold_tongues_kuramoto/` and include `arnold_tongues_results.npz`, `arnold_tongues_grid.csv`, `kuramoto_natural_frequencies.csv`, top parameter-pair CSV, and a text summary. The GUI shows backend-generated black/cyan plots for mean synchronization heatmap, synchronization variability heatmap, dominant frequencies, dimensionless omega, mean synchronization vs amplitude/frequency, the best order-parameter trace, and the top Arnold tongue parameter pairs.
+
+## v0.11.32 — Lyapunov Spectrum Custom
+
+Version 0.11.32 adds a native **Lyapunov Spectrum** workflow adapted from the custom local Lyapunov spectrum notebook. It runs all available channels by default, uses precomputed embedding `.npy` files when present, or generates delay embeddings from canonical `signal.npy` when embedding files are missing. Speed modes default to `ultra` and scale the embedding dimensions, neighbor count, anchor stride, maximum steps per embedding, and maximum points per embedding.
+
+The backend computes local Jacobian least-squares maps with QR accumulation, saves raw spectra and expert metrics, and renders black/cyan plots for LLE ranking, KS entropy proxy versus Kaplan-Yorke dimension, spectrum heatmaps, mean spectra by embedding dimension, dissipation versus instability, runtime QC, metric correlations, LLE distributions, top spectra overlays, and positive-exponent counts.
+
+## v0.11.32 — Wavelet Leader Multifractal
+
+Version 0.11.32 adds a native **Wavelet Leader Multifractal** workflow adapted from the manual Haar wavelet-leader notebook. It runs all available channels by default, trims signals to dyadic power-of-two length, computes Haar detail coefficients, wavelet leaders, leader structure functions, `zeta(q)`, `alpha(q)`, and `f(alpha)`, then saves per-channel `.npz` files plus `wavelet_leader_summary.csv` and `wavelet_leader_zeta_alpha_falpha.csv`.
+
+The GUI exposes speed modes with **ultra** as the default. The modes adjust q-grid density, maximum analysis samples, and fitted dyadic scale caps. Backend-generated black/cyan plots include per-channel `zeta(q)` / `alpha(q)` / `f(alpha)` triptychs, a wavelet-leader width-by-channel plot, and an alpha-width ranking.
+
+
+## What changed in v0.11.32
+
+The default GUI is intentionally simple. It no longer opens with every experimental or advanced option visible.
+
+The home screen shows the core import/compare actions plus the main fractal-analysis actions, including Higuchi FD, Embedded FD, Saturation Profiling, Katz FD, Wavelet Hurst, Manual Expert MFDFA, compact MFDFA Spectrum, MFDFA Shuffle Surrogate, MFDFA IAAFT Surrogate, Wavelet Leader Multifractal, Lyapunov Spectrum, Arnold Tongues / Kuramoto, and the MFDFA Plot Viewer.
+
+Extra lower-level tools remain available, but they are behind clickable **More tools** tabs instead of crowding the first screen.
+
+The old experimental/legacy plot area has been removed from the normal GUI. Normal NeuroMouse is still available from **More tools → NeuroMouse**.
+
+## Main workflows
+
+### 1. Import dataset / datasets
+
+Use this for one or more raw neural files, folders, or ZIP archives. The app converts each recording into the local canonical output folder with files such as:
+
+```text
+signal.npy
+channels.csv
+metadata.json
+quality_report.json
+```
+
+### 2. Compare datasets
+
+Use this when you have two dataset groups and want to compare converted recordings. This is intended for workflows such as baseline vs treatment, trained vs untrained, healthy vs diagnosed, or repeatability checks.
+
+### 3. Run Higuchi FD
+
+Runs a backend Higuchi fractal-dimension analysis on the selected/latest converted recording.
+
+It computes and plots:
+
+- Higuchi fractal dimension by channel
+- Log-L(k) fit diagnostics
+- Scalp/channel layout HFD map
+- Regional HFD summary
+- Left-right asymmetry
+- Rolling HFD stability
+- Complexity vs temporal instability
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/higuchi_fractal_dimension/
+```
+
+### 4. Run embedded FD
+
+Runs the embedded-attractor fractal-dimension workflow based on the notebook analysis supplied for this project. It computes box-counting fractal dimension and sampled Grassberger-Procaccia correlation dimension D2 across embedding dimensions, with black/cyan diagnostic plots and CSV summaries.
+
+It supports speed modes:
+
+```text
+ultra
+fast
+balanced
+full
+```
+
+It can use precomputed embedding files when available, or generate delay embeddings from canonical `signal.npy` when embeddings are not already present.
+
+It computes and plots:
+
+- Correlation dimension D2 vs embedding dimension
+- Box-counting FD vs embedding dimension
+- Mean embedded fractal dimensions
+- D2 heatmap
+- Box-counting FD heatmap
+- Channel dimension-complexity ranking
+- D2 vs box-counting FD scatter
+- Correlation-dimension saturation diagnostic
+- Fit-quality control
+- Diagnostic correlation-dimension fits
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/embedded_fractal_dimension/
+```
+
+## More tools
+
+Additional tools are still present, but they are no longer shown by default.
+
+Open **More tools** in the GUI to access:
+
+- NeuroMouse
+- All Advanced Methods
+- Quick Visualizations
+- Live Replay
+- Results
+
+### NeuroMouse
+
+The normal NeuroMouse workbench remains available for PSD heatmaps, centroid plots, geometry views, channel grids, phase-space views, playback, live replay, and other NeuroMouse-native visualizations.
+
+Open it from:
+
+```text
+More tools → NeuroMouse
+```
+
+or directly at:
+
+```text
+http://127.0.0.1:<port>/neuromouse/
+```
+
+
+### Dimension Saturation Profiling
+
+Version 0.11.32 adds a native **Dimension Saturation Profiling** workflow adapted from the notebook-style script. It uses the embedded fractal-dimension summary, or automatically runs Embedded FD first, then computes D2 increments, absolute/relative saturation estimates, tail slopes, plateau summaries, and class counts. The web GUI renders the same black/cyan-style plots: D2(m) saturation profiles, ΔD2 heatmap, saturation dimension barplot, tail-slope barplot, and saturation class counts.
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/dimension_saturation_profiling/
+```
+
+## Running the app
+
+From the extracted app folder:
+
+```bash
+python3 run_neuro_signal_app.py --port 8799 --force-install
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8799
+```
+
+Check that you are running the correct copy:
+
+```text
+http://127.0.0.1:8799/api/health
+```
+
+Expected result:
+
+```json
+{
+  "ok": true,
+  "version": "0.11.32",
+  "app_file": ".../neuro_signal_importer_analyzer/neuro_signal_webapp/app_server.py"
+}
+```
+
+The `app_file` path must **not** point into `.local/share/Trash`. If it does, an old Python server is still running.
+
+To kill old servers:
+
+```bash
+pkill -9 -f run_neuro_signal_app.py || true
+pkill -9 -f neuro_signal_webapp.app_server || true
+pkill -9 -f uvicorn || true
+fuser -k 8787/tcp 2>/dev/null || true
+fuser -k 8799/tcp 2>/dev/null || true
+```
+
+Then restart the app from the intended project folder.
+
+## Analysis output locations
+
+Converted recordings and analysis outputs are stored in the configured workspace, usually:
+
+```text
+/home/a/neuro_signal_app_workspace
+```
+
+Advanced method results are stored inside each recording folder:
+
+```text
+<recording_folder>/advanced_methods/<method_name>/
+```
+
+Common output files include:
+
+```text
+summary.csv
+channel_summary.csv
+mean_by_dimension.csv
+result.json
+plot data used by the web GUI
+```
+
+## Developer notes
+
+- The default GUI should stay minimal.
+- New or experimental tools should go under **More tools**, not on the first screen.
+- Fractal-dimension analyses should continue to use the black/cyan plotting style from the supplied notebook workflow.
+- Normal NeuroMouse should remain available, but not shown as a wall of buttons on startup.
+
+## v0.11.32 — Katz Fractal Dimension
+
+Version 0.11.32 adds a native **Katz Fractal Dimension** workflow adapted from the notebook-style Katz embedding script. The backend computes Katz FD for each embedded trajectory, using precomputed embedding `.npy` files when available or generating delay embeddings from canonical `signal.npy` when they are not. The web GUI keeps the same black/cyan plotting style and renders:
+
+- Katz FD for each embedding
+- Mean Katz FD vs embedding dimension
+- Channel × embedding-dimension Katz FD heatmap
+- Katz FD trajectories across embedding dimensions
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/katz_fractal_dimension/
+```
+
+
+
+### Plot readability fix
+
+All app-native canvas plots now reserve explicit label/tick margins and draw numeric x/y tick labels in cyan/white. This applies across Higuchi FD, Embedded FD, Dimension Saturation Profiling, Katz FD, and Manual Wavelet Hurst plots, while keeping the black/cyan notebook style.
+
+## v0.11.32 — Manual Wavelet Hurst Exponent
+
+Version 0.11.32 adds a native **Manual Wavelet Hurst Exponent** workflow adapted from the notebook-style manual wavelet script. It computes Haar/db4 DWT detail coefficients, estimates Hurst exponent from log2(scale) vs log2(std(detail coefficients)), computes a fractal-dimension proxy `D ≈ 2 - H`, and renders black/cyan plots for raw offset traces, Hurst ranking, fit R², scaling curves, detail stdev and energy heatmaps, regional/hemisphere summaries, topographic Hurst maps, and temporal stability.
+
+
+## v0.11.32 — Manual Expert MFDFA
+
+Version 0.11.32 adds a native **Manual Expert MFDFA** workflow adapted from the notebook-style MFDFA script. It runs the actual MFDFA analysis from canonical `signal.npy` before any viewer step, computing Fq(s), generalized Hurst curves h(q), tau(q), alpha/f(alpha), alpha width, spectrum asymmetry, h(q=0), fit R², and a multifractal complexity score. The app saves CSV/NPZ/TXT outputs and shows backend-generated black/cyan Matplotlib plots in the GUI so axis labels, ticks, legends, and colorbars remain visible. Plots include raw EEG offset traces, alpha-width and asymmetry rankings, h(q) curves, multifractal spectra, h(q) heatmaps, summary metric heatmaps, width-vs-h(0) scatter, spectrum/Fq galleries, topographic alpha-width maps, regional summaries, homologous hemisphere asymmetry, and optional temporal-stability views.
+
+
+## v0.11.32 — Manual MFDFA Spectrum + ultra defaults
+
+Version 0.11.32 adds a native **Manual MFDFA Spectrum** workflow adapted from the compact spectrum script. It computes `Fq(s)`, `h(q)`, `tau(q)`, `alpha`, and `f(alpha)` per channel, saves per-channel `.npz` files, writes `mfdfa_manual_spectrum_summary.csv`, and renders black/cyan Matplotlib plots for every channel: `h(q)`, `tau(q)`, singularity spectrum, plus a spectrum-width-by-channel summary.
+
+All analysis speed selectors now default to **ultra**. For analyses that did not already expose the shared speed labels, the app now uses `ultra`, `fast`, `balanced`, and `full` options mapped to the relevant variables for that analysis.
+
+## v0.11.32 — MFDFA Plot Viewer
+
+Version 0.11.32 adds a native **MFDFA Plot Viewer** workflow adapted from the notebook-style viewer script. This is not the MFDFA recomputation step; it organizes the outputs from **Manual Expert MFDFA**. It scans the per-channel MFDFA PNG plots and `mfdfa_summary_<mode>.csv`, then generates the same black/cyan viewer products as the notebook:
+
+- existing contact-sheet view when available
+- ranked MFDFA per-channel contact sheet
+- top alpha-width contact sheet
+- top absolute-asymmetry contact sheet
+- individual per-channel image pages
+- saved-image inventory plot
+- alpha-width ranking
+- spectrum-asymmetry ranking
+- composite complexity-score ranking
+- summary metric heatmap
+- width-vs-asymmetry scatter
+
+If the expected per-channel MFDFA images are missing, the viewer can optionally run **Manual Expert MFDFA** first with per-channel plots enabled, then build the viewer outputs from those generated files.
+
+## v0.11.32 — MFDFA Shuffle Surrogate
+
+Version 0.11.32 adds a native **MFDFA Shuffle Surrogate** workflow adapted from the shuffle-surrogate MFDFA script. It runs all available channels by default and compares the original multifractal spectrum width `Δα` against shuffled surrogate `Δα` distributions.
+
+The method exposes the same speed labels used by the other analysis tabs, with **ultra** as the default. The speed modes map to the MFDFA/shuffle variables used by the notebook workflow:
+
+- `ultra`: fewer scales/q-values and 5 shuffles per channel for fast screening
+- `fast`: moderate scales/q-values and 10 shuffles per channel
+- `balanced`: notebook-like `logspace(0.7, 4, 30)`, `q=-5..5` with 41 q-values, and 20 shuffles per channel
+- `full`: denser q/scales and 50 shuffles per channel
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/manual_mfdfa_shuffle_surrogate/
+```
+
+The GUI renders backend Matplotlib plots in the same black/cyan style:
+
+- per-channel original `h(q)`
+- per-channel original singularity spectrum `f(alpha)`
+- per-channel shuffled alpha-width histogram with original width marker
+- original-vs-shuffle mean summary bar plot
+- width-excess ranking, `original Δα - shuffle mean Δα`
+
+The method also writes `shuffle_mfdfa_summary.csv`, `shuffle_mfdfa_widths_long.csv`, per-channel `.npz` files, and a text summary.
+
+
+## v0.11.32 — MFDFA IAAFT Surrogate
+
+Version 0.11.32 adds a native **MFDFA IAAFT Surrogate** workflow adapted from the IAAFT-surrogate MFDFA script. It runs all available channels by default and compares the original multifractal spectrum width `Δα` against IAAFT surrogate `Δα` distributions. IAAFT surrogates preserve the empirical amplitude distribution and approximate power spectrum more tightly than simple shuffled surrogates.
+
+The method exposes the same speed labels used by the other analysis tabs, with **ultra** as the default. The speed modes map to relevant MFDFA/IAAFT variables:
+
+- `ultra`: fewer scales/q-values, 3 IAAFT surrogates per channel, and fewer IAAFT iterations for fast screening
+- `fast`: moderate scales/q-values, 6 IAAFT surrogates per channel, and moderate IAAFT iterations
+- `balanced`: notebook-like `logspace(0.7, 4, 30)`, `q=-5..5` with 41 q-values, 20 IAAFT surrogates, and 200 IAAFT iterations
+- `full`: denser q/scales, more surrogates, and more IAAFT iterations
+
+Outputs are saved under:
+
+```text
+<recording_folder>/advanced_methods/manual_mfdfa_iaaft_surrogate/
+```
+
+The GUI renders backend Matplotlib plots in the same black/cyan style:
+
+- per-channel original `h(q)`
+- per-channel original singularity spectrum `f(alpha)`
+- per-channel IAAFT alpha-width histogram with original width marker
+- original-vs-IAAFT mean summary bar plot
+- width-excess ranking, `original Δα - IAAFT mean Δα`
+
+The method also writes `iaaft_mfdfa_summary.csv`, `iaaft_mfdfa_widths_long.csv`, per-channel `.npz` files, and a text summary.

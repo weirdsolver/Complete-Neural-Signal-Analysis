@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neuro-signal-importer"
+version = "0.11.33"
+description = "Complete continuous neural signal system with HTML/FastAPI launcher, custom NeuroMouse workbench integration, archive/MAT conversion, live replay, comparative analysis, advanced NeuroMouse visualizations, variable-electrode support, and no bundled vendor copy."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scipy>=1.10",
+  "pyyaml>=6.0"
+]
+
+[project.optional-dependencies]
+mat73 = ["mat73>=0.62", "h5py>=3.8"]
+hdf5 = ["h5py>=3.8", "tables>=3.8"]
+io = ["h5py>=3.8", "openpyxl>=3.1", "tables>=3.8"]
+edf = ["mne>=1.6"]
+nwb = ["pynwb>=2.6", "h5py>=3.8"]
+zarr = ["zarr>=2.16"]
+frontend = ["fastapi>=0.110", "uvicorn>=0.25", "python-multipart>=0.0.9"]
+live = ["pyzmq>=25", "websockets>=11"]
+all = ["mat73>=0.62", "h5py>=3.8", "openpyxl>=3.1", "mne>=1.6", "tables>=3.8", "pynwb>=2.6", "zarr>=2.16", "pyzmq>=25", "websockets>=11", "fastapi>=0.110", "uvicorn>=0.25", "python-multipart>=0.0.9"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+neuro-import = "neuro_importer.cli:main"
+neuro-signal-app = "neuro_signal_webapp.app_server:main"
+neuro-live-backend = "neuro_importer_live.run_variable_backend:main"
+neuro-live-player = "neuro_importer_live.eeg_player_zmq_variable:main"
+neuro-live-receiver = "neuro_importer_live.eeg_receiver_zmq_window_pub_variable:main"
+neuro-live-analyzer = "neuro_importer_live.eeg_analyzer_zmq_variable:main"
+
+[project.entry-points."neuro_importer.adapters"]
+# Third-party packages can register adapters here.
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["neuro_importer*", "neuro_importer_live*", "neuro_importer_analysis*", "neuro_importer_speedmouse*", "neuro_importer_neuromouse*", "neuro_signal_webapp*"]
+
+[tool.setuptools.package-data]
+neuro_importer = ["config/*.yaml", "config/vendor_profiles/*.yaml"]
+neuro_importer_live = ["channel_profiles/*.json", "*.html"]
+neuro_signal_webapp = ["static/*.html", "static/*.css", "static/*.js", "neuromouse/*.html", "neuromouse/*.css", "neuromouse/*.md", "neuromouse/data/*.json", "neuromouse/data/*.csv", "neuromouse/js/*.js", "neuromouse/js/sources/*.js", "neuromouse/js/views/*.js", "neuromouse/js/workers/*.js", "neuromouse/tests/*.mjs", "neuromouse/tools/*.py", "neuromouse/tools/*.mjs", "neuromouse/tools/*.md", "neuromouse/audit/*.md"]

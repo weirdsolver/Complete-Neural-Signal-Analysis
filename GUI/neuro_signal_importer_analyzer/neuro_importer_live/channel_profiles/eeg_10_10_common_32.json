@@ -1,0 +1,6 @@
+{
+  "channel_namespace": "EEG_10_10_common_32",
+  "n_channels": 32,
+  "modality": "EEG",
+  "description": "Common 32-channel 10-10 EEG layout used by the earlier demo system."
+}

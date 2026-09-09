@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Variable Neural Raw Visualizer</title>
+<style>body{margin:0;background:#000;color:#0ff;font-family:monospace}header{padding:10px;border-bottom:1px solid #0ff}canvas{width:100vw;height:calc(100vh - 55px);display:block}input,button{background:#000;color:#0ff;border:1px solid #0ff;padding:6px}</style></head>
+<body><header>WebSocket <input id="url" value="ws://127.0.0.1:8765" size="32"><button onclick="connect()">Connect</button> <span id="status">disconnected</span></header><canvas id="c"></canvas>
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d'),statusEl=document.getElementById('status');let ws;
+function resize(){c.width=innerWidth*devicePixelRatio;c.height=(innerHeight-55)*devicePixelRatio;}addEventListener('resize',resize);resize();
+function connect(){if(ws)ws.close();ws=new WebSocket(document.getElementById('url').value);ws.binaryType='arraybuffer';ws.onopen=()=>statusEl.textContent='connected';ws.onclose=()=>statusEl.textContent='closed';ws.onmessage=e=>draw(e.data);}
+function draw(buf){const dv=new DataView(buf);const hlen=dv.getUint32(0,true),off=dv.getUint32(4,true);const header=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,8,hlen)));const data=new Float32Array(buf,off);const samples=header.shape[0],channels=header.shape[1];ctx.fillStyle='#000';ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle='#0ff';ctx.lineWidth=1;ctx.fillStyle='#0ff';ctx.fillText(`${channels} channels  ${samples} samples  ${header.sample_rate_hz} Hz`,10,15);const rowH=(c.height-25)/channels;for(let ch=0;ch<channels;ch++){let min=Infinity,max=-Infinity;for(let i=0;i<samples;i++){const v=data[i*channels+ch];if(v<min)min=v;if(v>max)max=v;}const mid=25+ch*rowH+rowH/2,scale=(rowH*0.4)/(Math.max(Math.abs(min),Math.abs(max),1e-9));ctx.beginPath();for(let i=0;i<samples;i++){const x=i/(samples-1)*c.width;const y=mid-data[i*channels+ch]*scale;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();if(rowH>10){const name=header.channel_manifest?.channel_names?.[ch]||`ch_${ch}`;ctx.fillText(name,4,mid-2);}}
+}
+</script></body></html>

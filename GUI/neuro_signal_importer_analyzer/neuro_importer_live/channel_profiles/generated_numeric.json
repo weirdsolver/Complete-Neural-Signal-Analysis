@@ -1,0 +1,4 @@
+{
+  "channel_namespace": "generated_numeric",
+  "description": "Fallback profile for any channel count. Names are generated as ch_000, ch_001, ..."
+}

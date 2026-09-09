@@ -1,0 +1,7 @@
+[console_scripts]
+neuro-import = neuro_importer.cli:main
+neuro-live-analyzer = neuro_importer_live.eeg_analyzer_zmq_variable:main
+neuro-live-backend = neuro_importer_live.run_variable_backend:main
+neuro-live-player = neuro_importer_live.eeg_player_zmq_variable:main
+neuro-live-receiver = neuro_importer_live.eeg_receiver_zmq_window_pub_variable:main
+neuro-signal-app = neuro_signal_webapp.app_server:main
